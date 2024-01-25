@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model UserRunX {
+  id             Int           @id @default(autoincrement())
+  firstname_eng  String
+  lastname_eng   String
+  firstname_thai String?
+  lastname_thai  String?
+  birth_date     String?
+  gender         String?
+  email          String        @unique
+  password       String
+  id_passport    String?
+  nationality    String?
+  policy         Boolean
+  Race_result    Race_result[]
+}
+
+model Organization {
+  id   Int     @id @default(autoincrement())
+  name String
+  race Races[]
+}
+
+model Events {
+  id        Int     @id @default(autoincrement())
+  name      String
+  cover_img String
+  logo_img  String
+  location  String
+  Races     Races[]
+}
+
+model Races {
+  id          Int           @id @default(autoincrement())
+  org         Organization  @relation(fields: [org_id], references: [id])
+  org_id      Int
+  event       Events        @relation(fields: [event_id], references: [id])
+  event_id    Int
+  name        String
+  date        DateTime
+  cover_img   String
+  logo_img    String
+  start_time  DateTime
+  max_point   Int
+  distance    Int
+  Race_result Race_result[]
+}
+
+model Race_result {
+  id            Int      @id @default(autoincrement())
+  race          Races    @relation(fields: [Races_id], references: [id])
+  Races_id      Int
+  UserRunx      UserRunX @relation(fields: [runx_id], references: [id])
+  runx_id       Int
+  rank          Int
+  points_gained Int
+  time          DateTime
+  firstname     String
+  lastname      String
+  gender        String
+  age_group     String
+  nationality   String
+}
+
