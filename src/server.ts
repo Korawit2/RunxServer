@@ -12,7 +12,9 @@ const app = new Elysia()
 
 .get("/all", () => getAllUser())
 
-
+.use(cors({
+  credentials: true,
+}))
 /////////////////////////////////////////////////sing up//////////////////////////////
 .post("/signup", async ({body, set}) => {
   const userBody: any = body
