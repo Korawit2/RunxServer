@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { autoroutes } from "elysia-autoroutes";
-import { getAllUser,  createUser, duplecateUser, checkUser, updateUser, updateUserOption, getIdUser} from "./model";
+import { getAllUser,  createUser, duplecateUser, checkUser, updateUser, updateUserOption, getIdUser, checkemail} from "./model";
 import { jwt } from '@elysiajs/jwt'
 import { cookie } from '@elysiajs/cookie'
 import { cors } from "@elysiajs/cors";
@@ -18,10 +18,8 @@ const app = new Elysia()
 /////////////////////////////////////////////////sing up//////////////////////////////
 .post("/signup", async ({body, set}) => {
   const userBody: any = body
-  const isEmailExit = prisma.userRunX.findUnique({
-    where: {email: userBody.email}
-  })
-  if (!isEmailExit) {
+  const isEmailExit = await checkemail(userBody.email)
+  if (!isEmailExit.isuser) {
     userBody.password = await Bun.password.hash(userBody.password, {
       algorithm: 'bcrypt',
       cost: 10,

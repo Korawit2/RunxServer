@@ -61,9 +61,8 @@ export const checkUser = async (user: any) =>{
     } 
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////
-export const checkemail = async (user: any) =>{
+export const checkemail = async (email: string) =>{
     try {
-        const email: string = user.email
         
         const query = await prisma.userRunX.findUnique({
             where: {
