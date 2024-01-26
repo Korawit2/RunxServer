@@ -10,11 +10,38 @@ const prisma = new PrismaClient()
 
 const app = new Elysia()
 
-.get("/all", () => getAllUser())
+
 
 .use(cors({
   credentials: true,
 }))
+
+.derive(async ({jwt, cookie, headers}) => {
+  const auth = headers.authorization
+  if(auth) {
+    const convert = auth.startsWith('Bearer ') ? auth.slice(7) : null
+    const profile = await jwt.verify(convert!)
+    return { profile }
+  } else {
+  return false
+  }
+  
+})
+
+.get("/", () => "server Runx is running ")
+
+.guard({
+  beforeHandle: ({set,profile}) =>{
+    if (!profile) {
+      set.status = 401
+      return 'Unauthorized'
+    }
+  }
+}, (app) =>
+          app
+            .get("/allll", () => getAllUser())
+)
+.get("/all", () => getAllUser())
 /////////////////////////////////////////////////sing up//////////////////////////////
 .post("/signup", async ({body, set}) => {
   const userBody: any = body
@@ -162,10 +189,6 @@ const app = new Elysia()
     email: t.Optional(t.String())
   })
 })
-
-
-
-
 
 .listen(3000);
 

@@ -23,6 +23,7 @@ model UserRunX {
   id_passport    String?
   nationality    String?
   policy         Boolean
+  user_img       String?
   Race_result    Race_result[]
 }
 
@@ -35,8 +36,8 @@ model Organization {
 model Events {
   id        Int     @id @default(autoincrement())
   name      String
-  cover_img String
-  logo_img  String
+  cover_img String?
+  logo_img  String?
   location  String
   Races     Races[]
 }
@@ -49,8 +50,8 @@ model Races {
   event_id    Int
   name        String
   date        DateTime
-  cover_img   String
-  logo_img    String
+  cover_img   String?
+  logo_img    String?
   start_time  DateTime
   max_point   Int
   distance    Int
@@ -72,4 +73,3 @@ model Race_result {
   age_group     String
   nationality   String
 }
-

@@ -1,10 +1,10 @@
 # Elysia with Bun runtime
 
 ## Getting Started
-To get started with this template, simply paste this command into your terminal:
-```bash
-bun create elysia ./elysia-example
-```
+install node_modules
+ run npm init -y
+ run npm install typescript ts-node @types/node --save-dev
+
 
 ## Development
 To start the development server run:
