@@ -145,11 +145,11 @@ export const createUser = async (user: any) =>{
 
 
 //////////////////////////////////////////updateUser//////////////////////////////////////////////
-export const updateUser = async (userBody: any, userId: number) =>{
+export const updateUser = async (userBody: any, userEmail: string) =>{
     try {   
         const updateUser = await prisma.userRunX.update({
             where: {
-                id: userId
+                email: userEmail
             },
             data: {
                 firstname_thai: userBody.firstname_thai,
@@ -166,12 +166,12 @@ export const updateUser = async (userBody: any, userId: number) =>{
         return { status: "fail"}
     } 
 }
-export const updateUserOption = async (userBody: any, userId: number) =>{
+export const updateUserOption = async (userBody: any, userEmail: string) =>{
     try {   
         
         const updateUser = await prisma.userRunX.update({
             where: {
-                id: userId
+                email: userEmail
             },
             data: {
                 ...userBody

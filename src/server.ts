@@ -42,6 +42,63 @@ const app = new Elysia()
 }, (app) =>
           app
             .get("/allll", () => getAllUser())
+
+            .post("/edit/user/:id", async ({body, set, profile})=> {
+              interface ObjectSort {
+                [key: string]: string | number | object;
+              }
+              try {
+                const userBody = body
+                const Editdata: ObjectSort = {};
+                var editOption: boolean = false
+                if (userBody.firstname_eng) {
+                  Editdata["firstname_eng"] = userBody.firstname_eng
+                  editOption = true
+                }
+                if (userBody.lastname_eng) {
+                  Editdata["lastname_eng"] = userBody.lastname_eng
+                  editOption = true
+                }
+                if (userBody.email) {
+                  Editdata["email"] = userBody.email
+                  editOption = true
+                }
+                if (userBody.email) {
+                  Editdata["user_img"] = userBody.user_img
+                  editOption = true
+                }
+                if (editOption) {
+                  const res = await updateUserOption(Editdata, profile)
+                }
+                const res = await updateUser(userBody, profile)
+                  if (res.status == "ok") {
+                    const user = await getIdUser(profile)
+                    return {
+                      message: "Edit successful",
+                      user: user
+                    }
+                  }
+              } catch (error) {
+                set.status = 500
+                return {
+                    message: "Edit fail"     
+                }
+              }
+              
+            },{
+              body: t.Object({
+                firstname_eng: t.Optional(t.String()),
+                lastname_eng: t.Optional(t.String()),
+                firstname_thai: t.String(),
+                lastname_thai: t.String(),
+                birth_date: t.String(),
+                gender: t.String(),
+                id_passport: t.String(),
+                nationality: t.String(),
+                email: t.Optional(t.String()),
+                user_img: t.Optional(t.String())
+              })
+            })
 )
 .get("/all", () => getAllUser())
 /////////////////////////////////////////////////sing up//////////////////////////////
@@ -97,7 +154,7 @@ const app = new Elysia()
       secret: process.env.JWT_SECRET as string
   })
 )
-.use(cookie())
+
 
 .post("/login", async ({body, set, jwt, cookie, setCookie}) => {
   try {
@@ -109,16 +166,13 @@ const app = new Elysia()
         status: false,
       }
     }
-    setCookie('authToken', await jwt.sign({
+    const token = await jwt.sign({
       email: userData.email
-    }), {
-      httpOnly: true,
-      maxAge: 7 * 86400,
     })
 
     return {
       status: true,
-      token: cookie.authToken,
+      token: token,
       userr: { "userid": res.query?.id,
                 "firstname": res.query?.firstname_eng
       }
@@ -139,62 +193,7 @@ const app = new Elysia()
 
 //////////////////////////////////////////////////////login///////////////////////////////////////////////////
 
-.post("/edit/user/:id", async ({body, set, params})=> {
-  interface ObjectSort {
-    [key: string]: string | number | object;
-  }
-  try {
-    const userBody = body
-    const Editdata: ObjectSort = {};
-    var editOption: boolean = false
-    if (userBody.firstname_eng) {
-      Editdata["firstname_eng"] = userBody.firstname_eng
-      editOption = true
-    }
-    if (userBody.lastname_eng) {
-      Editdata["lastname_eng"] = userBody.lastname_eng
-      editOption = true
-    }
-    if (userBody.email) {
-      Editdata["email"] = userBody.email
-      editOption = true
-    }
-    if (userBody.email) {
-      Editdata["user_img"] = userBody.user_img
-      editOption = true
-    }
-    if (editOption) {
-      const res = await updateUserOption(Editdata, parseInt(params.id))
-    }
-    const res = await updateUser(userBody, parseInt(params.id))
-      if (res.status == "ok") {
-        const user = await getIdUser(parseInt(params.id))
-        return {
-          message: "Edit successful",
-          user: user
-        }
-      }
-  } catch (error) {
-    set.status = 500
-    return {
-        message: "Edit fail"     
-    }
-  }
-  
-},{
-  body: t.Object({
-    firstname_eng: t.Optional(t.String()),
-    lastname_eng: t.Optional(t.String()),
-    firstname_thai: t.String(),
-    lastname_thai: t.String(),
-    birth_date: t.String(),
-    gender: t.String(),
-    id_passport: t.String(),
-    nationality: t.String(),
-    email: t.Optional(t.String()),
-    user_img: t.Optional(t.String())
-  })
-})
+
 ///////////////////////////////////////////////////////////////////////////
 .get("/org", () => getAllOrg())
 
@@ -227,7 +226,12 @@ const app = new Elysia()
 })
 
 .get("/events", () => {
-  return prisma.events.findMany()
+  return prisma.events.findMany({
+    include: {
+      Races: true,
+    },
+}
+  )
 })
 .post("/events", async ({body, set})=> {
   const eventBody = body
@@ -252,6 +256,9 @@ const app = new Elysia()
   })
 })
 
+.get("/races", () => {
+  return prisma.races.findMany()
+})
 .post("/race/:org/:event", async ({body, set, params})=>{
   try {
     const race = body
