@@ -16,7 +16,7 @@ model UserRunX {
   lastname_eng   String
   firstname_thai String?
   lastname_thai  String?
-  birth_date     String?
+  birth_date     DateTime?
   gender         String?
   email          String        @unique
   password       String
@@ -29,13 +29,13 @@ model UserRunX {
 
 model Organization {
   id   Int     @id @default(autoincrement())
-  name String
+  name String  @unique
   race Races[]
 }
 
 model Events {
   id        Int     @id @default(autoincrement())
-  name      String
+  name      String  @unique
   cover_img String?
   logo_img  String?
   location  String
@@ -48,11 +48,11 @@ model Races {
   org_id      Int
   event       Events        @relation(fields: [event_id], references: [id])
   event_id    Int
-  name        String
+  name        String        @unique
   date        DateTime
   cover_img   String?
   logo_img    String?
-  start_time  DateTime
+  start_time  String
   max_point   Int
   distance    Int
   Race_result Race_result[]

@@ -154,7 +154,7 @@ export const updateUser = async (userBody: any, userId: number) =>{
             data: {
                 firstname_thai: userBody.firstname_thai,
                 lastname_thai: userBody.lastname_thai,
-                birth_date: userBody.birth_date,
+                birth_date: new Date(userBody.birth_date),
                 gender: userBody.gender,
                 id_passport: userBody.id_passport,
                 nationality: userBody.nationality,
@@ -185,3 +185,93 @@ export const updateUserOption = async (userBody: any, userId: number) =>{
 }
 ////////////////////////////////////////////updateUser////////////////////////////////////////////////
 
+export const createOrg = async (org: any) =>{
+    try {
+        const orgName: string = org.name
+        const isOrgExit = await prisma.organization.findUnique({
+            where: {
+                name: org.name
+            }
+        })
+        if (isOrgExit == null) {
+            const users = await prisma.organization.create({
+                data: {
+                    name: org.name
+                }
+            })
+            return { status: 'ok'}
+        }
+        return { status: 'org exit'}
+        
+    } catch (error) {
+        console.log('error',error)
+        return { status: "fail"}
+    } 
+}
+
+export const getAllOrg = () =>{
+    try {
+        const query = prisma.organization.findMany()
+        return query
+    } catch (error) {
+        console.log('error',error)
+        return { status: 'error', error}
+    } 
+}
+
+export const createEvent = async (events: any) =>{
+    try {
+        const title: string = events.name
+        const query = await prisma.events.findUnique({
+            where: {
+                name: title
+            }
+        })
+        if (query) {
+            return false
+        }
+        const users = await prisma.events.create({
+            data: {
+                name: title,
+                location: events.location
+            
+            }
+        })
+        return true
+    } catch (error) {
+        console.log('error',error)
+        return { status: 'error', error}
+    } 
+}
+
+
+export const createRace = async (race: any, params: any) =>{
+    try {
+        const title: string = race.name
+        const query = await prisma.races.findUnique({
+            where: {
+                name: title
+            }
+        })
+        if (query) {
+            return false
+        }
+        const users = await prisma.races.create({
+            data: {
+                org_id: parseInt(params.org) ,
+                event_id: parseInt(params.event) ,
+                name: race.name,
+                date: new Date(race.date),
+                start_time: race.start_time,
+                max_point: race.max_point,
+                distance: race.distance
+
+            
+            }
+        })
+        return true
+    } catch (error) {
+        console.log('error',error)
+        return { status: 'error', error}
+    } 
+}

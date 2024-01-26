@@ -1,11 +1,13 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { autoroutes } from "elysia-autoroutes";
-import { getAllUser,  createUser, duplecateUser, checkUser, updateUser, updateUserOption, getIdUser, checkemail} from "./model";
+import { getAllUser,  createUser, duplecateUser, checkUser, updateUser, updateUserOption, getIdUser, checkemail, createOrg
+        ,getAllOrg, createEvent, createRace} from "./model";
 import { jwt } from '@elysiajs/jwt'
 import { cookie } from '@elysiajs/cookie'
 import { cors } from "@elysiajs/cors";
 import { isNotEmpty } from "elysia/dist/handler";
+import { create } from "domain";
 const prisma = new PrismaClient()
 
 const app = new Elysia()
@@ -155,7 +157,10 @@ const app = new Elysia()
     }
     if (userBody.email) {
       Editdata["email"] = userBody.email
-      
+      editOption = true
+    }
+    if (userBody.email) {
+      Editdata["user_img"] = userBody.user_img
       editOption = true
     }
     if (editOption) {
@@ -186,10 +191,104 @@ const app = new Elysia()
     gender: t.String(),
     id_passport: t.String(),
     nationality: t.String(),
-    email: t.Optional(t.String())
+    email: t.Optional(t.String()),
+    user_img: t.Optional(t.String())
+  })
+})
+///////////////////////////////////////////////////////////////////////////
+.get("/org", () => getAllOrg())
+
+.post("/org", async ({body, set})=> {
+  const orgBody = body
+  try {
+    const res = await createOrg(orgBody)
+    if (res.status == "ok") {
+      return {
+        message: "insert complete",
+        orgBody
+      }
+    }
+    return {
+      message: "insert fail",
+      orgBody
+    }
+    
+  } catch (error) {
+    set.status = 500
+    return {
+        message: 'error',
+        error        
+    }
+  }
+},{
+  body: t.Object({
+    name: t.String()
   })
 })
 
+.get("/events", () => {
+  return prisma.events.findMany()
+})
+.post("/events", async ({body, set})=> {
+  const eventBody = body
+  try {
+    const eventBody = body
+    const res = await createEvent(body)
+    if (!res) {
+      return { message: "insert fail"}
+    }
+    return { message: "insert complete "}
+  } catch (error) {
+    set.status = 500
+    return {
+        message: 'error',
+        error        
+    }
+  }
+},{
+  body: t.Object({
+    name: t.String(),
+    location: t.String()
+  })
+})
+
+.post("/race/:org/:event", async ({body, set, params})=>{
+  try {
+    const race = body
+    const res = await createRace(race, params)
+    if (res) {
+      return { 
+        message: "insert race complete",
+        data: body
+      }
+    }
+    return { 
+      message: "insert race fail",
+      data: body
+    }
+  }  catch (error) {
+    set.status = 500
+    return {
+        message: 'error',
+        error        
+    }
+  }
+},{
+  body: t.Object({
+    name: t.String(),
+    date: t.String(),
+    start_time: t.String(),
+    max_point: t.Number(),
+    distance: t.Number()
+  })
+})
+
+// .delete("/del/:id", ({params}) => {
+//   return prisma.userRunX.delete({
+//     where: {id: Number(params.id)}
+//   })
+// })
+//////////////////////////////////////////////////////////////////////////////
 .listen(3000);
 
 
