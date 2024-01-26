@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { autoroutes } from "elysia-autoroutes";
-import { getAllUser,  createUser, duplecateUser, checkUser, updateUser, updateUserOption, getIdUser, checkemail, createOrg
+import { getAllUser,  createUser, duplecateUser, checkUser, updateUser, updateUserOption, getUserByEmail, checkemail, createOrg
         ,getAllOrg, createEvent, createRace} from "./model";
 import { jwt } from '@elysiajs/jwt'
 import { cookie } from '@elysiajs/cookie'
@@ -41,7 +41,10 @@ const app = new Elysia()
   }
 }, (app) =>
           app
-            .get("/allll", () => getAllUser())
+            .get("/curentuser", ({profile}) => {
+              getUserByEmail(profile)
+              /// pull score 
+            })
 
             .post("/edit/user/:id", async ({body, set, profile})=> {
               interface ObjectSort {
@@ -287,6 +290,26 @@ const app = new Elysia()
     start_time: t.String(),
     max_point: t.Number(),
     distance: t.Number()
+  })
+})
+
+.post("/raceresult/:raceid/:userid",({body, set, parames}) =>{
+  try {
+    const raceBody = body 
+
+  } catch{
+
+  }
+},{
+  body: t.Object({
+    rank: t.Number(),
+    points_gained: t.Number(),
+    time: t.String(),
+    firstname: t.String(),
+    lastname: t.String(),
+    gender: t.String(),
+    age_group: t.String(),
+    nationality: t.String()
   })
 })
 

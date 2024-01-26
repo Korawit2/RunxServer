@@ -55,6 +55,7 @@ model Races {
   start_time  String
   max_point   Int
   distance    Int
+  time_stamp  DateTime      @default(now())
   Race_result Race_result[]
 }
 
@@ -66,10 +67,12 @@ model Race_result {
   runx_id       Int
   rank          Int
   points_gained Int
-  time          DateTime
+  time          String
   firstname     String
   lastname      String
   gender        String
   age_group     String
   nationality   String
+  claim_status  Boolean  @default(false)
+  time_stamp    DateTime @default(now())
 }

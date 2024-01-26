@@ -18,10 +18,10 @@ export const getAllUser = () =>{
     } 
 }
 
-export const getIdUser = async (id :number) =>{
+export const getUserByEmail = async (profile :string) =>{
     try {
         const query = await prisma.userRunX.findUnique({
-            where: {id: Number(id)}
+            where: {email: profile}
         })
         return query
         
