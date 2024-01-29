@@ -8,7 +8,8 @@
   "dependencies": {
     "@elysiajs/cors": "^0.8.0",
     "@prisma/client": "5.8.1",
-    "elysia": "latest"
+    "elysia": "latest",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/node": "^20.11.6",

@@ -66,7 +66,6 @@ model Race_result {
   UserRunx      UserRunX @relation(fields: [runx_id], references: [id])
   runx_id       Int
   rank          Int
-  points_gained Int
   time          String
   firstname     String
   lastname      String

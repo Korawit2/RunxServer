@@ -8,7 +8,9 @@ import { cookie } from '@elysiajs/cookie'
 import { cors } from "@elysiajs/cors";
 import { isNotEmpty } from "elysia/dist/handler";
 import { create } from "domain";
-const prisma = new PrismaClient()
+
+import XLSX from "xlsx"
+const db = new PrismaClient()
 
 const app = new Elysia()
 
@@ -229,7 +231,7 @@ const app = new Elysia()
 })
 
 .get("/events", () => {
-  return prisma.events.findMany({
+  return db.events.findMany({
     include: {
       Races: true,
     },
@@ -260,7 +262,7 @@ const app = new Elysia()
 })
 
 .get("/races", () => {
-  return prisma.races.findMany()
+  return db.race_result.findMany()
 })
 .post("/race/:org/:event", async ({body, set, params})=>{
   try {
@@ -313,8 +315,13 @@ const app = new Elysia()
   })
 })
 
+
+.post('/upload', async ({ body: { excelFile, raceId, runx_id }, set  }) => {
+    return {excelFile ,raceId, runx_id} 
+})
+
 // .delete("/del/:id", ({params}) => {
-//   return prisma.userRunX.delete({
+//   return db.userRunX.delete({
 //     where: {id: Number(params.id)}
 //   })
 // })

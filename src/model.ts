@@ -6,11 +6,11 @@ interface ObjectSort {
     [key: string]: string | number | object;
 }
 
-const prisma = new PrismaClient()
+const db = new PrismaClient()
 
 export const getAllUser = () =>{
     try {
-        const query = prisma.userRunX.findMany()
+        const query = db.userRunX.findMany()
         return query
     } catch (error) {
         console.log('error',error)
@@ -20,7 +20,7 @@ export const getAllUser = () =>{
 
 export const getUserByEmail = async (profile :string) =>{
     try {
-        const query = await prisma.userRunX.findUnique({
+        const query = await db.userRunX.findUnique({
             where: {email: profile}
         })
         return query
@@ -36,7 +36,7 @@ export const checkUser = async (user: any) =>{
     try {
         const email: string = user.userData.email
         
-        const query = await prisma.userRunX.findUnique({
+        const query = await db.userRunX.findUnique({
             where: {
                 email: email
             }
@@ -64,7 +64,7 @@ export const checkUser = async (user: any) =>{
 export const checkemail = async (email: string) =>{
     try {
         
-        const query = await prisma.userRunX.findUnique({
+        const query = await db.userRunX.findUnique({
             where: {
                 email: email
             }
@@ -87,7 +87,7 @@ export const checkemail = async (email: string) =>{
 
 export const editPassword = async (body: any) =>{
     try {
-        const updateUser = await prisma.userRunX.update({
+        const updateUser = await db.userRunX.update({
             where: {
                 email: body.email
             },
@@ -112,7 +112,7 @@ export const editPassword = async (body: any) =>{
 ///////////////////////////////////////////////////singup///////////////////////////////////////////////////
 export const duplecateUser = async (email: any) =>{
     try {
-        const query = await prisma.userRunX.findUnique({
+        const query = await db.userRunX.findUnique({
             where: {
                 email: email
             }
@@ -126,7 +126,7 @@ export const duplecateUser = async (email: any) =>{
 
 export const createUser = async (user: any) =>{
     try {
-        const users = await prisma.userRunX.create({
+        const users = await db.userRunX.create({
             data: {
                 firstname_eng: user.firstname,
                 lastname_eng: user.lastname,
@@ -147,7 +147,7 @@ export const createUser = async (user: any) =>{
 //////////////////////////////////////////updateUser//////////////////////////////////////////////
 export const updateUser = async (userBody: any, userEmail: string) =>{
     try {   
-        const updateUser = await prisma.userRunX.update({
+        const updateUser = await db.userRunX.update({
             where: {
                 email: userEmail
             },
@@ -169,7 +169,7 @@ export const updateUser = async (userBody: any, userEmail: string) =>{
 export const updateUserOption = async (userBody: any, userEmail: string) =>{
     try {   
         
-        const updateUser = await prisma.userRunX.update({
+        const updateUser = await db.userRunX.update({
             where: {
                 email: userEmail
             },
@@ -188,13 +188,13 @@ export const updateUserOption = async (userBody: any, userEmail: string) =>{
 export const createOrg = async (org: any) =>{
     try {
         const orgName: string = org.name
-        const isOrgExit = await prisma.organization.findUnique({
+        const isOrgExit = await db.organization.findUnique({
             where: {
                 name: org.name
             }
         })
         if (isOrgExit == null) {
-            const users = await prisma.organization.create({
+            const users = await db.organization.create({
                 data: {
                     name: org.name
                 }
@@ -211,7 +211,7 @@ export const createOrg = async (org: any) =>{
 
 export const getAllOrg = () =>{
     try {
-        const query = prisma.organization.findMany()
+        const query = db.organization.findMany()
         return query
     } catch (error) {
         console.log('error',error)
@@ -222,7 +222,7 @@ export const getAllOrg = () =>{
 export const createEvent = async (events: any) =>{
     try {
         const title: string = events.name
-        const query = await prisma.events.findUnique({
+        const query = await db.events.findUnique({
             where: {
                 name: title
             }
@@ -230,7 +230,7 @@ export const createEvent = async (events: any) =>{
         if (query) {
             return false
         }
-        const users = await prisma.events.create({
+        const users = await db.events.create({
             data: {
                 name: title,
                 location: events.location
@@ -248,7 +248,7 @@ export const createEvent = async (events: any) =>{
 export const createRace = async (race: any, params: any) =>{
     try {
         const title: string = race.name
-        const query = await prisma.races.findUnique({
+        const query = await db.races.findUnique({
             where: {
                 name: title
             }
@@ -256,7 +256,7 @@ export const createRace = async (race: any, params: any) =>{
         if (query) {
             return false
         }
-        const users = await prisma.races.create({
+        const users = await db.races.create({
             data: {
                 org_id: parseInt(params.org) ,
                 event_id: parseInt(params.event) ,
