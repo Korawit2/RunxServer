@@ -1,19 +1,8 @@
 
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
+import * as interface_ from "./interface";
 
-interface ObjectSort {
-    [key: string]: string | number | object;
-}
-export interface ExcelUploadRuner {
-    rank: string
-    time: string,
-    firstname: string,
-    lastname: string,
-    gender: string
-    age_group: string
-    nationality: string
-}
 
 const db = new PrismaClient()
 
@@ -288,7 +277,7 @@ export const createRace = async (race: any, params: any) =>{
         return { status: 'error', error}
     } 
 }
-export async function uploadDataToRaces(db: PrismaClient, raceId: string, runx_id: string, dataRace_result: ExcelUploadRuner[]) {
+export async function uploadDataToRaces(db: PrismaClient, raceId: string, runx_id: string, dataRace_result: interface_.ExcelUploadRuner[]) {
 
     const dataConvert = dataRace_result.map((item,i) => {
         return {
