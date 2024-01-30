@@ -277,28 +277,58 @@ export const createRace = async (race: any, params: any) =>{
         return { status: 'error', error}
     } 
 }
-export async function uploadDataToRaces(db: PrismaClient, raceId: string, runx_id: string, dataRace_result: interface_.ExcelUploadRuner[]) {
 
-    const dataConvert = dataRace_result.map((item,i) => {
-        return {
-            Races_id: parseID(raceId),
-            runx_id: parseID(runx_id),
-            rank: parseID(item.rank),
-            time: item.time,
-            firstname: item.firstname,
-            lastname: item.lastname,
-            gender: item.gender,
-            age_group: item.age_group,
-            nationality: item.nationality
-        }
+export const getIduser = async (profile :string) =>{
+    try {
+        const query = await db.userRunX.findUnique({
+            include: {
+                Race_result: true,
+            },
+            where: {email: profile}
+            
+        })
+        return query
+        
+    } catch (error) {
+        console.log('error',error)
+        return []
+    } 
+}
+
+export async function uploadDataToRaces(db: PrismaClient, raceId: string, dataRace_result: interface_.ExcelUploadRuner[]) {
+
+    const dataConvert =  dataRace_result.map((item,i) => {
+        var name = item.Name.split(" ")
+        const firstname: string = name[0]
+        const lastname: string = name[1]
+        const userid =  db.userRunX.findFirst({
+            where: {
+                firstname_eng: firstname,
+                lastname_eng: lastname,
+                nationality: item.Nationality
+            }
+        })
+        console.log(userid)
+
+        // return {
+        //     Races_id: parseID(raceId),
+        //     runx_id: parseID(runx_id),
+        //     rank: parseID(item.rank),
+        //     time: item.time,
+        //     firstname: firstname,
+        //     lastname: lastname,
+        //     gender: item.gender,
+        //     age_group: item.age_group,
+        //     nationality: item.nationality
+        // }
     })
 
-    const updateData = await db.race_result.createMany({
-        data: dataConvert
-    })
+    // const updateData = await db.race_result.createMany({
+    //     data: dataConvert
+    // })
 
     
-    return updateData;
+    //return updateData;
 
     function parseID(id: string) {
         return Number.parseInt(id, 10);

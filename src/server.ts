@@ -69,7 +69,11 @@ const app = new Elysia()
     nationality: t.String()
   })
 })
-
+// .get("/", ()=> {
+//   var str = "Apples are round, and apples are juicy."; 
+// var splitted = str.split(" "); 
+// console.log(splitted[2])
+// })
 .listen(3000);
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
