@@ -58,7 +58,7 @@ export const appPlugin = new Elysia()
     })
 )
 
-.post("/login", async ({body, set, jwt, cookie, setCookie}) => {
+.post("/login", async ({body, set, jwt}) => {
     try {
         const userData: any = body
         const res = await checkUser({userData})
