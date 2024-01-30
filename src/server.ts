@@ -6,6 +6,9 @@ import { swagger } from '@elysiajs/swagger'
 import { appPlugin } from './api/user/user'
 import { appUserDuardPlugin } from './api/user/guardUser'
 import { appUpload } from './api/races/upload'
+import { appOrgPlugin } from './api/org_Events/Organization'
+import { appEventPlugin } from './api/org_Events/Events'
+import { appRacesPlugin } from './api/races/races'
 
 const db = new PrismaClient()
 const app = new Elysia()
@@ -43,102 +46,9 @@ const app = new Elysia()
 
 .use(appPlugin)
 .use(appUpload)
-
-
-.get("/org", () => getAllOrg())
-
-.post("/org", async ({body, set})=> {
-  const orgBody = body
-  try {
-    const res = await createOrg(orgBody)
-    if (res.status == "ok") {
-      return {
-        message: "insert complete",
-        orgBody
-      }
-    }
-    return {
-      message: "insert fail",
-      orgBody
-    }
-    
-  } catch (error) {
-    set.status = 500
-    return {
-        message: 'error',
-        error        
-    }
-  }
-},{
-  body: t.Object({
-    name: t.String()
-  })
-})
-
-.get("/events", () => {
-  return db.events.findMany({
-    include: {
-      Races: true,
-    },
-}
-  )
-})
-.post("/events", async ({body, set})=> {
-  const eventBody = body
-  try {
-    const eventBody = body
-    const res = await createEvent(body)
-    if (!res) {
-      return { message: "insert fail"}
-    }
-    return { message: "insert complete "}
-  } catch (error) {
-    set.status = 500
-    return {
-        message: 'error',
-        error        
-    }
-  }
-},{
-  body: t.Object({
-    name: t.String(),
-    location: t.String()
-  })
-})
-
-.get("/races", () => {
-  return db.race_result.findMany()
-})
-.post("/race/:org/:event", async ({body, set, params})=>{
-  try {
-    const race = body
-    const res = await createRace(race, params)
-    if (res) {
-      return { 
-        message: "insert race complete",
-        data: body
-      }
-    }
-    return { 
-      message: "insert race fail",
-      data: body
-    }
-  }  catch (error) {
-    set.status = 500
-    return {
-        message: 'error',
-        error        
-    }
-  }
-},{
-  body: t.Object({
-    name: t.String(),
-    date: t.String(),
-    start_time: t.String(),
-    max_point: t.Number(),
-    distance: t.Number()
-  })
-})
+.use(appOrgPlugin)
+.use(appEventPlugin)
+.use(appRacesPlugin)
 
 .post("/raceresult/:raceid/:userid",({body, set, parames}) =>{
   try {

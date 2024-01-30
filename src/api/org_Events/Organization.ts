@@ -1,0 +1,38 @@
+import { Elysia, t } from "elysia";
+import { PrismaClient } from '@prisma/client'
+
+import {getAllOrg, createOrg} from '../../model';
+
+const db = new PrismaClient()
+
+
+export const appOrgPlugin = new Elysia()
+    .get("/org", () => getAllOrg())
+
+    .post("/org", async ({body, set})=> {
+    const orgBody = body
+    try {
+        const res = await createOrg(orgBody)
+        if (res.status == "ok") {
+        return {
+            message: "insert complete",
+            orgBody
+        }
+        }
+        return {
+        message: "insert fail",
+        orgBody
+        }
+        
+    } catch (error) {
+        set.status = 500
+        return {
+            message: 'error',
+            error        
+        }
+    }
+    },{
+    body: t.Object({
+        name: t.String()
+    })
+    })
