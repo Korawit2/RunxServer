@@ -5,6 +5,15 @@ import { PrismaClient } from '@prisma/client'
 interface ObjectSort {
     [key: string]: string | number | object;
 }
+export interface ExcelUploadRuner {
+    rank: string
+    time: string,
+    firstname: string,
+    lastname: string,
+    gender: string
+    age_group: string
+    nationality: string
+}
 
 const db = new PrismaClient()
 
@@ -21,7 +30,11 @@ export const getAllUser = () =>{
 export const getUserByEmail = async (profile :string) =>{
     try {
         const query = await db.userRunX.findUnique({
+            include: {
+                Race_result: true,
+            },
             where: {email: profile}
+            
         })
         return query
         
@@ -275,3 +288,33 @@ export const createRace = async (race: any, params: any) =>{
         return { status: 'error', error}
     } 
 }
+export async function uploadDataToRaces(db: PrismaClient, raceId: string, runx_id: string, dataRace_result: ExcelUploadRuner[]) {
+
+    const dataConvert = dataRace_result.map((item,i) => {
+        return {
+            Races_id: parseID(raceId),
+            runx_id: parseID(runx_id),
+            rank: parseID(item.rank),
+            time: item.time,
+            firstname: item.firstname,
+            lastname: item.lastname,
+            gender: item.gender,
+            age_group: item.age_group,
+            nationality: item.nationality
+        }
+    })
+
+    const updateData = await db.race_result.createMany({
+        data: dataConvert
+    })
+
+    
+    return updateData;
+
+    function parseID(id: string) {
+        return Number.parseInt(id, 10);
+    }
+
+}
+
+

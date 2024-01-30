@@ -1,17 +1,14 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import { autoroutes } from "elysia-autoroutes";
-import { getAllUser,  createUser, duplecateUser, checkUser, updateUser, updateUserOption, getUserByEmail, checkemail, createOrg
-        ,getAllOrg, createEvent, createRace} from "./model";
+import {  getAllUser,  createUser, duplecateUser, checkUser, updateUser, updateUserOption, 
+          getUserByEmail, checkemail, createOrg, uploadDataToRaces, getRaceResult,
+          getAllOrg, createEvent, createRace} from "./model";
 import { jwt } from '@elysiajs/jwt'
-import { cookie } from '@elysiajs/cookie'
 import { cors } from "@elysiajs/cors";
-import { isNotEmpty } from "elysia/dist/handler";
-import { create } from "domain";
-
 import XLSX from "xlsx"
-const db = new PrismaClient()
+import { swagger } from '@elysiajs/swagger'
 
+const db = new PrismaClient()
 const app = new Elysia()
 
 
@@ -20,20 +17,19 @@ const app = new Elysia()
   credentials: true,
 }))
 
-.derive(async ({jwt, cookie, headers}) => {
+.derive(async ({jwt,  headers}) => {
   const auth = headers.authorization
   if(auth) {
-    const convert = auth.startsWith('Bearer ') ? auth.slice(7) : null
-    const profile = await jwt.verify(convert!)
+    //const convert = auth.startsWith('Bearer ') ? auth.slice(7) : null
+    const profile = await jwt.verify(auth!)
     return { profile }
   } else {
   return false
   }
-  
 })
 
 .get("/", () => "server Runx is running ")
-
+.use(swagger())
 .guard({
   beforeHandle: ({set,profile}) =>{
     if (!profile) {
@@ -43,9 +39,11 @@ const app = new Elysia()
   }
 }, (app) =>
           app
-            .get("/curentuser", ({profile}) => {
-              getUserByEmail(profile)
-              /// pull score 
+            .get("/curentuser", async ({profile}) => {
+              const user: any = await getUserByEmail(profile.email)
+              return {
+                user: user,
+              }
             })
 
             .post("/edit/user/:id", async ({body, set, profile})=> {
@@ -77,7 +75,7 @@ const app = new Elysia()
                 }
                 const res = await updateUser(userBody, profile)
                   if (res.status == "ok") {
-                    const user = await getIdUser(profile)
+                    const user = await getUserByEmail(profile)
                     return {
                       message: "Edit successful",
                       user: user
@@ -317,7 +315,46 @@ const app = new Elysia()
 
 
 .post('/upload', async ({ body: { excelFile, raceId, runx_id }, set  }) => {
-    return {excelFile ,raceId, runx_id} 
+
+  const columnsField = ['rank','gun_time','firstname','lastname','gender','age_group','nationality'];
+  var workbook = XLSX.read(await excelFile.arrayBuffer(), { type: "array" });
+  const sheetName = workbook.SheetNames[0];
+  const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  const sheetJSON_ =  JSON.parse(JSON.stringify(sheetData))
+  const selectFirstRow = sheetJSON_[0];
+  const columnValidate = columnsField.every(field => selectFirstRow.hasOwnProperty(field));
+  if(sheetData) {
+    const selectFirstRow = sheetJSON_[0];
+    const columnValidate = columnsField.every(field => selectFirstRow.hasOwnProperty(field));
+
+    if (columnValidate) {
+        const response = await db.uploadDataToRaces(db, raceId, sheetJSON_, runx_id)
+
+        return {
+            success:true,
+            data:response,
+            success_msg: "Data has been added in races."
+        }
+    } else {
+        set.status = 400;
+        return {
+            error: true,
+            error_msg: "Some fields is missing."
+        }
+    }
+} else {
+    set.status = 400;
+    return {
+        error: true,
+        error_msg: "Please re-check your data file."
+    }
+}
+},{
+  body: t.Object({
+    excelFile: t.File(),
+    raceId: t.String(),
+    runx_id: t.String()
+})
 })
 
 // .delete("/del/:id", ({params}) => {
@@ -326,9 +363,9 @@ const app = new Elysia()
 //   })
 // })
 //////////////////////////////////////////////////////////////////////////////
+
+
 .listen(3000);
-
-
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
 );
