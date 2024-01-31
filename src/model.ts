@@ -295,40 +295,30 @@ export const getIduser = async (profile :string) =>{
     } 
 }
 
-export async function uploadDataToRaces(db: PrismaClient, raceId: string, dataRace_result: interface_.ExcelUploadRuner[]) {
 
+
+export async function uploadDataToRaces(db: PrismaClient, raceId: string, dataRace_result: interface_.ExcelUploadRuner[]) {
     const dataConvert =  dataRace_result.map((item,i) => {
         var name = item.Name.split(" ")
         const firstname: string = name[0]
         const lastname: string = name[1]
-        const userid =  db.userRunX.findFirst({
-            where: {
-                firstname_eng: firstname,
-                lastname_eng: lastname,
-                nationality: item.Nationality
-            }
-        })
-        console.log(userid)
-
-        // return {
-        //     Races_id: parseID(raceId),
-        //     runx_id: parseID(runx_id),
-        //     rank: parseID(item.rank),
-        //     time: item.time,
-        //     firstname: firstname,
-        //     lastname: lastname,
-        //     gender: item.gender,
-        //     age_group: item.age_group,
-        //     nationality: item.nationality
-        // }
+        return {
+            Races_id: parseID(raceId),
+            rank: item.Rank,
+            time: item.Gun_Time,
+            firstname: firstname,
+            lastname: lastname,
+            gender: item.Gender,
+            age_group: item.Age_Group,
+            nationality: item.Nationality
+        }
     })
 
-    // const updateData = await db.race_result.createMany({
-    //     data: dataConvert
-    // })
+    const updateData = await db.race_result.createMany({
+        data: dataConvert
+    })
 
-    
-    //return updateData;
+    return updateData;
 
     function parseID(id: string) {
         return Number.parseInt(id, 10);

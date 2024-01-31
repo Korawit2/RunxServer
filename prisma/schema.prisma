@@ -24,7 +24,7 @@ model UserRunX {
   nationality    String?
   policy         Boolean
   user_img       String?
-  Race_result    Race_result[]
+  //Race_result    Race_result[]
 }
 
 model Organization {
@@ -63,8 +63,8 @@ model Race_result {
   id            Int      @id @default(autoincrement())
   race          Races    @relation(fields: [Races_id], references: [id])
   Races_id      Int
-  UserRunx      UserRunX @relation(fields: [runx_id], references: [id])
-  runx_id       Int
+  //UserRunx      UserRunX @relation(fields: [runx_id], references: [id])
+  runx_id       Int?
   rank          Int
   time          String
   firstname     String
