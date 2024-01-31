@@ -12,9 +12,7 @@ export const appUserDuardPlugin = new Elysia()
 
 .get("/curentuser", async ({profile}) => {
     const user: any = await getUserByEmail(profile.email)
-    return {
-        user: user
-    }
+    return user
 })
 
 .post("/edit/user/:id", async ({body, set, profile})=> {
