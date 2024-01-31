@@ -50,30 +50,7 @@ const app = new Elysia()
 .use(appEventPlugin)
 .use(appRacesPlugin)
 
-// .post("/raceresult/:raceid/:userid",({body, set, parames}) =>{
-//   try {
-//     const raceBody = body 
 
-//   } catch{
-
-//   }
-// },{
-//   body: t.Object({
-//     rank: t.Number(),
-//     points_gained: t.Number(),
-//     time: t.String(),
-//     firstname: t.String(),
-//     lastname: t.String(),
-//     gender: t.String(),
-//     age_group: t.String(),
-//     nationality: t.String()
-//   })
-// })
-// .get("/", ()=> {
-//   var str = "Apples are round, and apples are juicy."; 
-// var splitted = str.split(" "); 
-// console.log(splitted[2])
-// })
 .listen(3000);
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`

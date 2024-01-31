@@ -6,21 +6,14 @@ import * as interface_ from "../../interface";
 
 
 const db = new PrismaClient()
-
-
 export const appUserDuardPlugin = new Elysia()
-
-
-
-
-
 
 .get("/all", () => getAllUser())
 
 .get("/curentuser", async ({profile}) => {
     const user: any = await getUserByEmail(profile.email)
     return {
-        user: user,
+        user: user
     }
 })
 
@@ -50,10 +43,10 @@ export const appUserDuardPlugin = new Elysia()
         }
         const res = await updateUser(userBody, profile)
         if (res.status == "ok") {
-            const user = await getUserByEmail(profile)
+            const user = await getUserByEmail(profile.email)
             return {
                 message: "Edit successful",
-                user: user
+                user: user.user
             }
             }
         } catch (error) {
@@ -62,7 +55,6 @@ export const appUserDuardPlugin = new Elysia()
             message: "Edit fail"     
         }
         }
-        
     },{
         body: t.Object({
         firstname_eng: t.Optional(t.String()),

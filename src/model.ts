@@ -20,9 +20,8 @@ export const getUserByEmail = async (profile :string) =>{
     try {
         const queryUser = await db.userRunX.findUnique({
             where: {
-                email: profile.email
+                email: profile
             }
-            
         })
         const reacesResult = await db.race_result.findMany({
             where: {
@@ -31,12 +30,10 @@ export const getUserByEmail = async (profile :string) =>{
                 nationality: queryUser?.nationality
             }
         })
-        console.log(reacesResult)
         return {
-            user: queryUser
-            //reacesResult: reacesResult
+            user: queryUser,
+            reacesResult: reacesResult
         }
-        
     } catch (error) {
         console.log('error',error)
         return []
@@ -47,7 +44,6 @@ export const getUserByEmail = async (profile :string) =>{
 export const checkUser = async (user: any) =>{
     try {
         const email: string = user.userData.email
-        
         const query = await db.userRunX.findUnique({
             where: {
                 email: email
