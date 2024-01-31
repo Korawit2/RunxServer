@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import {getUserByEmail,  getAllUser, updateUserOption, updateUser} from '../../model';
-
+import * as interface_ from "../../interface";
 
 
 
@@ -25,12 +25,9 @@ export const appUserDuardPlugin = new Elysia()
 })
 
 .post("/edit/user/:id", async ({body, set, profile})=> {
-    interface ObjectSort {
-        [key: string]: string | number | object;
-    }
     try {
         const userBody = body
-        const Editdata: ObjectSort = {};
+        const Editdata: interface_.ObjectSort = {};
         var editOption: boolean = false
         if (userBody.firstname_eng) {
             Editdata["firstname_eng"] = userBody.firstname_eng

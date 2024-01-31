@@ -19,7 +19,9 @@ export const getAllUser = () =>{
 export const getUserByEmail = async (profile :string) =>{
     try {
         const queryUser = await db.userRunX.findUnique({
-            where: {email: profile}
+            where: {
+                email: profile.email
+            }
             
         })
         const reacesResult = await db.race_result.findMany({
@@ -29,10 +31,10 @@ export const getUserByEmail = async (profile :string) =>{
                 nationality: queryUser?.nationality
             }
         })
-        //console.log(reacesResult)
+        console.log(reacesResult)
         return {
-            user: queryUser,
-            reacesResult: reacesResult
+            user: queryUser
+            //reacesResult: reacesResult
         }
         
     } catch (error) {
@@ -159,7 +161,7 @@ export const updateUser = async (userBody: any, userEmail: string) =>{
     try {   
         const updateUser = await db.userRunX.update({
             where: {
-                email: userEmail
+                email: userEmail.email
             },
             data: {
                 firstname_thai: userBody.firstname_thai,
@@ -286,22 +288,7 @@ export const createRace = async (race: any, params: any) =>{
     } 
 }
 
-export const getIduser = async (profile :string) =>{
-    try {
-        const query = await db.userRunX.findUnique({
-            include: {
-                Race_result: true,
-            },
-            where: {email: profile}
-            
-        })
-        return query
-        
-    } catch (error) {
-        console.log('error',error)
-        return []
-    } 
-}
+
 
 
 
