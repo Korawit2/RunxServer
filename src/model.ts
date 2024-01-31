@@ -18,14 +18,22 @@ export const getAllUser = () =>{
 
 export const getUserByEmail = async (profile :string) =>{
     try {
-        const query = await db.userRunX.findUnique({
-            include: {
-                Race_result: true,
-            },
+        const queryUser = await db.userRunX.findUnique({
             where: {email: profile}
             
         })
-        return query
+        const reacesResult = await db.race_result.findMany({
+            where: {
+                firstname: queryUser?.firstname_eng,
+                lastname: queryUser?.lastname_eng,
+                nationality: queryUser?.nationality
+            }
+        })
+        //console.log(reacesResult)
+        return {
+            user: queryUser,
+            reacesResult: reacesResult
+        }
         
     } catch (error) {
         console.log('error',error)
