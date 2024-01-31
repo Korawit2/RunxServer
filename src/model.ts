@@ -23,17 +23,26 @@ export const getUserByEmail = async (profile :string) =>{
                 email: profile
             }
         })
-        const reacesResult = await db.race_result.findMany({
+        var reacesResult = await db.race_result.findMany({
             where: {
                 firstname: queryUser?.firstname_eng,
                 lastname: queryUser?.lastname_eng,
                 nationality: queryUser?.nationality
             }
         })
+        //console.log(Object.keys(reacesResult).length)
+        if (Object.keys(reacesResult).length != 0) {
+            return {
+                user: queryUser,
+                reacesResult: reacesResult,
+                
+            }
+        }
         return {
             user: queryUser,
-            reacesResult: reacesResult
+            reacesResult: "user must edit nationality",
         }
+        
     } catch (error) {
         console.log('error',error)
         return []
