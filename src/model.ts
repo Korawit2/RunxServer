@@ -49,35 +49,17 @@ export const getUserByEmail = async (profile :string) =>{
     } 
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const checkUser = async (user: any) =>{
+export const checkAdmin = async (admin: any) =>{
     try {
-        const email: string = user.userData.email
-        const queryuser = await db.userRunX.findUnique({
-            where: {
-                email: email
-            }
-        })
+        const email: string = admin.userData.email
         const queryadmin = await db.admin.findUnique({
             where: {
                 email: email
             }
         })
-        if (queryuser) { ///// check user///////
-            const passUser: any = queryuser?.password
-            const isMatch = await Bun.password.verify(user.userData.password, passUser);
-            if (!isMatch) {
-                return {message :'login fail'}           
-            }
-            
-            return {
-                loggedIn: true,
-                role: "user"
-            } 
-        }
         if (queryadmin) { ////// check admin/////
             const passUser: any = queryadmin?.password
-            const isMatch = await Bun.password.verify(user.userData.password, passUser);
+            const isMatch = await Bun.password.verify(admin.userData.password, passUser);
             if (!isMatch) {
                 return {message :'login fail'}           
             }
@@ -90,12 +72,41 @@ export const checkUser = async (user: any) =>{
         return {
             loggedIn: false
         } 
+    }  catch (error) {
+        throw new Error('fail')
+    } 
+    
+}
+export const checkUser = async (user: any) =>{
+    try {
+        const email: string = user.userData.email
+        const queryuser = await db.userRunX.findUnique({
+            where: {
+                email: email
+            }
+        })
         
-        
+        if (queryuser) { ///// check user///////
+            const passUser: any = queryuser?.password
+            const isMatch = await Bun.password.verify(user.userData.password, passUser);
+            if (!isMatch) {
+                return {message :'login fail'}           
+            }
+            
+            return {
+                loggedIn: true,
+                role: "user"
+            } 
+        }
+        return {
+            loggedIn: false
+        } 
     } catch (error) {
         throw new Error('fail')
     } 
 }
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

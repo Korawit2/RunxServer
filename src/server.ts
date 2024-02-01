@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import {  createOrg, getAllOrg, createEvent, createRace} from "./model";
+import { checkAdmin } from "./model";
 import { cors } from "@elysiajs/cors";
 import { swagger } from '@elysiajs/swagger'
 import { appPlugin } from './api/user/user'
@@ -72,6 +72,7 @@ const app = new Elysia()
           .use(getraces)
           .use(appgetOrgPlugin)
           .use(appgetEventPlugin)
+          
 )
 .use(appPlugin)
 

@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { jwt } from '@elysiajs/jwt'
-import { checkemail,  duplecateUser, createUser, checkUser } from '../../model';
+import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin } from '../../model';
 
 
 const db = new PrismaClient()
@@ -90,3 +90,36 @@ export const appPlugin = new Elysia()
         password: t.String(),
     })
 })
+
+.post("/admin", async ({body, set, jwt}) => {
+        try {
+            const userData: any = body
+            const res: any = await checkAdmin({userData})
+            if (!res.loggedIn) {
+                set.status = 500
+                return {
+                status: false,
+                }
+            }
+            const token = await jwt.sign({
+                email: userData.email,
+                role: res.role
+            })
+            return {
+                status: true,
+                token: token,
+                //role: res.role
+            }
+            
+        } catch (error) {
+            set.status = 500
+            return {
+                message: 'error',
+                error        
+        }
+    }},{
+        body: t.Object({
+            email: t.String(),
+            password: t.String(),
+        })
+    })
