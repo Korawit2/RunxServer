@@ -53,30 +53,51 @@ export const getUserByEmail = async (profile :string) =>{
 export const checkUser = async (user: any) =>{
     try {
         const email: string = user.userData.email
-        const query = await db.userRunX.findUnique({
+        const queryuser = await db.userRunX.findUnique({
             where: {
                 email: email
             }
         })
-        const passUser: any = query?.password
-        if (!passUser) {
-            throw new Error('User not found')            
+        const queryadmin = await db.admin.findUnique({
+            where: {
+                email: email
+            }
+        })
+        if (queryuser) { ///// check user///////
+            const passUser: any = queryuser?.password
+            const isMatch = await Bun.password.verify(user.userData.password, passUser);
+            if (!isMatch) {
+                return {message :'login fail'}           
+            }
+            
+            return {
+                loggedIn: true,
+                role: "user"
+            } 
         }
-        const isMatch = await Bun.password.verify(user.userData.password, passUser);
-        if (!isMatch) {
-            return {message :'login fail'}           
+        if (queryadmin) { ////// check admin/////
+            const passUser: any = queryadmin?.password
+            const isMatch = await Bun.password.verify(user.userData.password, passUser);
+            if (!isMatch) {
+                return {message :'login fail'}           
+            }
+            
+            return {
+                loggedIn: true,
+                role: "admin"
+            } 
         }
-        return {
-            loggedIn: true,
-            query
-        }
-    } catch (error) {
-        console.log('error',error)
         return {
             loggedIn: false
-        }
+        } 
+        
+        
+    } catch (error) {
+        throw new Error('fail')
     } 
 }
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 export const checkemail = async (email: string) =>{
     try {

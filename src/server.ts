@@ -4,11 +4,12 @@ import {  createOrg, getAllOrg, createEvent, createRace} from "./model";
 import { cors } from "@elysiajs/cors";
 import { swagger } from '@elysiajs/swagger'
 import { appPlugin } from './api/user/user'
-import { appUserDuardPlugin } from './api/user/guardUser'
+import { appUserguardPlugin } from './api/user/guardUser'
 import { appUpload } from './api/races/upload'
-import { appOrgPlugin } from './api/org_Events/Organization'
-import { appEventPlugin } from './api/org_Events/Events'
-import { appRacesPlugin } from './api/races/races'
+import { appPostOrgPlugin, appgetOrgPlugin } from './api/org_Events/Organization'
+import { appEventPlugin, appgetEventPlugin } from './api/org_Events/Events'
+import { appRacesPlugin, getraces } from './api/races/races'
+
 
 const db = new PrismaClient()
 const app = new Elysia()
@@ -24,6 +25,7 @@ const app = new Elysia()
   if(auth) {
     //const convert = auth.startsWith('Bearer ') ? auth.slice(7) : null
     const profile = await jwt.verify(auth!)
+    //console.log(profile)
     return { profile }
   } else {
   return false
@@ -38,17 +40,41 @@ const app = new Elysia()
       set.status = 401
       return 'Unauthorized'
     }
+    else if (profile.role != "user") {
+      return 'Unauthorized'
+    } 
   }
 }, (app) =>
           app
-          .use(appUserDuardPlugin)
+          .use(appUserguardPlugin)
+          .use(getraces)
+          .use(appgetOrgPlugin)
+          .use(appgetEventPlugin)
 )
 
+
+.guard({
+  beforeHandle: ({set,profile}) =>{
+    if (!profile) {
+      set.status = 401
+      return 'Unauthorized'
+    }
+    else if (profile.role != "admin") {
+      return 'Unauthorized'
+    } 
+  }
+}, (app) =>
+          app
+          .use(appUpload)
+          .use(appPostOrgPlugin)
+          .use(appEventPlugin)
+          .use(appRacesPlugin)
+          .use(getraces)
+          .use(appgetOrgPlugin)
+          .use(appgetEventPlugin)
+)
 .use(appPlugin)
-.use(appUpload)
-.use(appOrgPlugin)
-.use(appEventPlugin)
-.use(appRacesPlugin)
+
 
 
 .listen(3000);

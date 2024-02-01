@@ -7,9 +7,6 @@ const db = new PrismaClient()
 
 
 export const appRacesPlugin = new Elysia()
-    .get("/races", () => {
-        return db.races.findMany()
-    })
     .post("/race/:org/:event", async ({body, set, params})=>{
         try {
         const race = body
@@ -39,4 +36,9 @@ export const appRacesPlugin = new Elysia()
         max_point: t.Number(),
         distance: t.Number()
         })
+    })
+
+export const getraces = new Elysia()
+    .get("/races", () => {
+        return db.races.findMany()
     })

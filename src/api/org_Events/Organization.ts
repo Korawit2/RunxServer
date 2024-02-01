@@ -6,7 +6,7 @@ import {getAllOrg, createOrg} from '../../model';
 const db = new PrismaClient()
 
 
-export const appOrgPlugin = new Elysia()
+export const appPostOrgPlugin = new Elysia()
     .get("/org", () => getAllOrg())
 
     .post("/org", async ({body, set})=> {
@@ -36,3 +36,6 @@ export const appOrgPlugin = new Elysia()
         name: t.String()
     })
     })
+
+    export const appgetOrgPlugin = new Elysia()
+    .get("/org", () => getAllOrg())

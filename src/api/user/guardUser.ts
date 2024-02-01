@@ -6,13 +6,17 @@ import * as interface_ from "../../interface";
 
 
 const db = new PrismaClient()
-export const appUserDuardPlugin = new Elysia()
+export const appUserguardPlugin = new Elysia()
 
 .get("/all", () => getAllUser())
 
 .get("/curentuser", async ({profile}) => {
-    const user: any = await getUserByEmail(profile.email)
-    return user
+    if (profile.role == "user") {
+        const user: any = await getUserByEmail(profile.email)
+        return user
+    }
+    console.log("admin access")
+    
 })
 
 .post("/edit/user/:id", async ({body, set, profile})=> {

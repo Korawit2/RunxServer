@@ -38,3 +38,13 @@ export const appEventPlugin = new Elysia()
             location: t.String()
         })
     })
+    export const appgetEventPlugin = new Elysia()
+
+    .get("/events", () => {
+        return db.events.findMany({
+        include: {
+            Races: true,
+        },
+    }
+        )
+    })

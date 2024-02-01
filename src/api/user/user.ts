@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { jwt } from '@elysiajs/jwt'
-import {checkemail,  duplecateUser, createUser, checkUser } from '../../model';
+import { checkemail,  duplecateUser, createUser, checkUser } from '../../model';
 
 
 const db = new PrismaClient()
@@ -61,7 +61,7 @@ export const appPlugin = new Elysia()
 .post("/login", async ({body, set, jwt}) => {
     try {
         const userData: any = body
-        const res = await checkUser({userData})
+        const res: any = await checkUser({userData})
         if (!res.loggedIn) {
             set.status = 500
             return {
@@ -69,16 +69,14 @@ export const appPlugin = new Elysia()
             }
         }
         const token = await jwt.sign({
-        email: userData.email
+            email: userData.email,
+            role: res.role
         })
         return {
-        status: true,
-        token: token,
-        userr: { 
-            "userid": res.query?.id,
-            "firstname": res.query?.firstname_eng
+            status: true,
+            token: token,
+            //role: res.role
         }
-    }
     } catch (error) {
         set.status = 500
         return {

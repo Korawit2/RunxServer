@@ -11,14 +11,14 @@ datasource db {
 }
 
 model UserRunX {
-  id             Int           @id @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   firstname_eng  String
   lastname_eng   String
   firstname_thai String?
   lastname_thai  String?
   birth_date     DateTime?
   gender         String?
-  email          String        @unique
+  email          String    @unique
   password       String
   id_passport    String?
   nationality    String?
@@ -60,18 +60,24 @@ model Races {
 }
 
 model Race_result {
-  id            Int      @id @default(autoincrement())
-  race          Races    @relation(fields: [Races_id], references: [id])
-  Races_id      Int
+  id           Int      @id @default(autoincrement())
+  race         Races    @relation(fields: [Races_id], references: [id])
+  Races_id     Int
   //UserRunx      UserRunX @relation(fields: [runx_id], references: [id])
-  runx_id       Int?
-  rank          Int
-  time          String
-  firstname     String
-  lastname      String
-  gender        String
-  age_group     String
-  nationality   String
-  claim_status  Boolean  @default(false)
-  time_stamp    DateTime @default(now())
+  runx_id      Int?
+  rank         Int
+  time         String
+  firstname    String
+  lastname     String
+  gender       String
+  age_group    String
+  nationality  String
+  claim_status Boolean  @default(false)
+  time_stamp   DateTime @default(now())
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
 }
