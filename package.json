@@ -8,6 +8,7 @@
   "dependencies": {
     "@elysiajs/cors": "^0.8.0",
     "@elysiajs/swagger": "^0.8.5",
+    "@google-cloud/storage": "^7.7.0",
     "@prisma/client": "5.8.1",
     "elysia": "latest",
     "xlsx": "^0.18.5"

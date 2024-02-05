@@ -38,7 +38,7 @@ model Events {
   name      String  @unique
   cover_img String?
   logo_img  String?
-  location  String
+  country  String
   Races     Races[]
 }
 

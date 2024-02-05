@@ -7,7 +7,7 @@ import { appPlugin } from './api/user/user'
 import { appUserguardPlugin } from './api/user/guardUser'
 import { appUpload } from './api/races/upload'
 import { appPostOrgPlugin, appgetOrgPlugin } from './api/org_Events/Organization'
-import { appEventPlugin, appgetEventPlugin } from './api/org_Events/Events'
+import { appEventPlugin, appgetEventPlugin, appgetfillterEventPlugin } from './api/org_Events/Events'
 import { appRacesPlugin, getraces } from './api/races/races'
 
 
@@ -75,8 +75,40 @@ const app = new Elysia()
           
 )
 .use(appPlugin)
-
-
+.use(appgetfillterEventPlugin)
+.post("/uploadImg", async ({body}) =>{
+  const { Storage } = require('@google-cloud/storage')
+  const storage = new Storage();
+  async function generateV4ReadSignedUrl() {
+    // These options will allow temporary read access to the file
+    const options = {
+      version: 'v4',
+      action: 'read',
+      expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+    };
+  
+    // Get a v4 signed URL for reading the file
+    const [url] = await storage
+      .bucket('runx-runners-dev')
+      .file()
+      .getSignedUrl(options);
+  
+    console.log('Generated GET signed URL:');
+    console.log(url);
+    console.log('You can use this URL with any user agent, for example:');
+    console.log(`curl '${url}'`);
+  }
+  generateV4ReadSignedUrl().catch(console.error);
+  
+  // const blob = body.file
+  // console.log(blob)
+  // const buf = Buffer.from(await blob.arrayBuffer());
+  // const qwe = buf.toString("base64")
+  // const atob1 = Buffer.from(qwe)
+  
+  
+  
+})
 
 .listen(3000);
 console.log(

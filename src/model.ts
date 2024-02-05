@@ -74,8 +74,7 @@ export const checkAdmin = async (admin: any) =>{
         } 
     }  catch (error) {
         throw new Error('fail')
-    } 
-    
+    }
 }
 export const checkUser = async (user: any) =>{
     try {
@@ -282,7 +281,7 @@ export const createEvent = async (events: any) =>{
         const users = await db.events.create({
             data: {
                 name: title,
-                location: events.location
+                country: events.location
             
             }
         })
@@ -356,6 +355,40 @@ export async function uploadDataToRaces(db: PrismaClient, raceId: string, dataRa
         return Number.parseInt(id, 10);
     }
 
+}
+
+
+export const eventFilter = async  (filter:{ country?: string, distance?: string, year: string, title: string }) =>{
+    try {
+        const filterQuery: interface_.ObjectSort = {};
+        if (filter.country) {
+            filterQuery["country"] = filter.country
+        }
+        if (filter.distance) {
+            filterQuery["distance"] = filter.distance
+        }
+        if (filter.year) {
+            filterQuery["year"] = filter.year
+        }
+        if(filter.title) {
+            if((filter.title).trim() !== "") {
+                filterQuery["name"] = {
+                    contains:filter.title,
+                    mode: 'insensitive'
+                }
+            }
+            
+        }
+        const eventsData = await db.events.findMany({
+            where: {
+                ...filterQuery
+            }
+        });
+        return eventsData
+    } catch (error) {
+        console.log('error',error)
+        return { status: 'error', error}
+    } 
 }
 
 

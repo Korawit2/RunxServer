@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 
-import {createEvent} from '../../model';
+import {createEvent ,eventFilter} from '../../model';
 
 const db = new PrismaClient()
 
@@ -38,8 +38,7 @@ export const appEventPlugin = new Elysia()
             location: t.String()
         })
     })
-    export const appgetEventPlugin = new Elysia()
-
+export const appgetEventPlugin = new Elysia()
     .get("/events", () => {
         return db.events.findMany({
         include: {
@@ -48,3 +47,29 @@ export const appEventPlugin = new Elysia()
     }
         )
     })
+
+export const appgetfillterEventPlugin = new Elysia()
+    .post("/events/filter", async ({body, set})=>{
+        try {
+            const event = await eventFilter(body)
+            set.status = 200
+            return {
+                //status: 200,
+                data: event
+            }
+        } catch (error){
+            set.status = 400
+            return {
+                message: 'error',
+                error        
+            }
+        }
+        
+        },{
+            body: t.Object({
+                country: t.Optional(t.String()),
+                distance: t.Optional(t.String()),
+                year:t.Optional(t.String()),
+                title: t.Optional(t.String()),
+            })
+        })
