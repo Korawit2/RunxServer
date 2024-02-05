@@ -1,5 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
+googleclound.json
 
 # dependencies
 /node_modules
@@ -43,5 +43,5 @@ yarn-error.log*
 package-lock.json
 **/*.bun
 
-googlecloud.json
-test.json
+
+

@@ -21,7 +21,7 @@ export const appUserguardPlugin = new Elysia()
 
 .post("/edit/user/:id", async ({body, set, profile})=> {
     try {
-        const userBody = body
+        const userBody = body;
         const Editdata: interface_.ObjectSort = {};
         var editOption: boolean = false
         if (userBody.firstname_eng) {
