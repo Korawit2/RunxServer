@@ -43,5 +43,5 @@ yarn-error.log*
 package-lock.json
 **/*.bun
 
-
+googlecloud.json
 test.json
