@@ -24,7 +24,7 @@ const app = new Elysia()
   const auth = headers.authorization
   if(auth) {
     //const convert = auth.startsWith('Bearer ') ? auth.slice(7) : null
-    const profile = await jwt.verify(auth!)
+    const profile = await jwt.verify(auth!) //jwt.verify(convert!)
     //console.log(profile)
     return { profile }
   } else {
@@ -72,9 +72,8 @@ const app = new Elysia()
 )
 .use(appPlugin)
 .use(appgetfillterEventPlugin)
-.post("/uploadImg", async ({body, set}) =>{
+.get("/uploadImg", async ({set}) =>{
   try {
-    //const ext  = body;
     const extFile = "jpg";
     const filename = crypto.randomUUID();
     const bucket = 's.dev.runx.run'
