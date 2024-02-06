@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import { checkAdmin, uploadURI } from "./model";
+import { uploadURI } from "./model";
 import { cors } from "@elysiajs/cors";
 import { swagger } from '@elysiajs/swagger'
 import { appPlugin } from './api/user/user'

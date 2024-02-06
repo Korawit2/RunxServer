@@ -5,6 +5,8 @@ import * as interface_ from "./interface";
 import { Storage } from '@google-cloud/storage'
 
 
+const db = new PrismaClient()
+
 export const uploadURI = async (params: any) =>{
     try {
         const storage = new Storage({ keyFilename: 'src/googleclound.json' })
