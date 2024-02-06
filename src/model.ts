@@ -399,12 +399,12 @@ export const eventFilter = async  (filter:{ country?: string, distance?: string,
 export const uploadURI = async (params: any) =>{
     try {
         const storage = new Storage({ keyFilename: 'src/googleclound.json' })
-        const {filename, bucket, ext, extFile} = params
+        const {filename, bucket,  extFile} = params
         const options: any = {
                 version: 'v4',
                 action: 'write',
                 expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-                contentType: ext,
+                contentType: "image/jpeg",
                 extensionHeaders: {
                     'x-goog-acl': 'public-read'
                 }
@@ -413,13 +413,9 @@ export const uploadURI = async (params: any) =>{
         // file to a specific bucket in Google Cloud Storage. 
         const url = await storage
             .bucket(bucket)
-            .file(`/images/users/profile/${filename}.${extFile}`)
+            .file(`images/users/profile/${filename}.${extFile}`)
             .getSignedUrl(options);
-
         return url;
-
-
-        
     } catch (error) {
         console.log('error',error)
         return { status: 'error', error}
