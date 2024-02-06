@@ -1,7 +1,7 @@
 
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import * as interface_ from "./interface";
+
 import { Storage } from '@google-cloud/storage'
 
 
