@@ -23,7 +23,7 @@ const app = new Elysia()
     if(auth) {
       //const convert = auth.startsWith('Bearer ') ? auth.slice(7) : null
       const profile = await jwt.verify(auth!) //jwt.verify(convert!)
-      //console.log(profile)
+      console.log(profile)
       return { profile }
     } else {
     return false
@@ -41,13 +41,13 @@ const app = new Elysia()
         return 'Unauthorized'
       } 
     }
-  }, (app) =>
-            app
-            .use(appUserguardPlugin)
-            .use(getraces)
-            .use(appgetOrgPlugin)
-            .use(appgetEventPlugin)
-  )
+    }, (app) =>
+              app
+              .use(appUserguardPlugin)
+              .use(getraces)
+              .use(appgetOrgPlugin)
+              .use(appgetEventPlugin)
+    )
   .guard({
     beforeHandle: ({set,profile}) =>{
       if (!profile) {
