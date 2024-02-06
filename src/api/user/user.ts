@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { jwt } from '@elysiajs/jwt'
-import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin } from '../../model';
+import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin } from '../../query/user/userquery';
 
 
 const db = new PrismaClient()

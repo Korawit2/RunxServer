@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 
-import {getAllOrg, createOrg} from '../../model';
+import {getAllOrg, createOrg} from '../../query/org_Events/org_query';
 
 const db = new PrismaClient()
 

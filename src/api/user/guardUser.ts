@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import {getUserByEmail,  getAllUser, updateUserOption, updateUser} from '../../model';
+import {getUserByEmail,  getAllUser, updateUserOption, updateUser} from '../../query/user/guarduserQuery';
 import * as interface_ from "../../interface";
 
 

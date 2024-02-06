@@ -1,7 +1,7 @@
 
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import { uploadDataToRaces } from '../../model';
+import { uploadDataToRaces } from '../../query/races/racesQuery';
 import XLSX from "xlsx"
 
 const db = new PrismaClient()

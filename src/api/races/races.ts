@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 
-import {createRace} from '../../model';
+import {createRace} from '../../query/races/racesQuery';
 
 const db = new PrismaClient()
 

@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 
-import {createEvent ,eventFilter} from '../../model';
+import {createEvent, eventFilter} from '../../query/org_Events/event_query';
 
 const db = new PrismaClient()
 
