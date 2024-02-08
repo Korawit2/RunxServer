@@ -46,7 +46,7 @@ const app = new Elysia()
               .use(appUserguardPlugin)
               .use(getraces)
               .use(appgetOrgPlugin)
-              .use(appgetEventPlugin)
+              // .use(appgetEventPlugin)
     )
   .guard({
     beforeHandle: ({set,profile}) =>{
@@ -68,6 +68,7 @@ const app = new Elysia()
             .use(appgetOrgPlugin)
             .use(appgetEventPlugin)
   )
+  .use(appgetEventPlugin)
   .use(appPlugin)
   .use(appgetfillterEventPlugin)
   .get("/uploadImg", async ({set}) =>{
