@@ -23,6 +23,11 @@ export const getUserByEmail = async (profile :string) =>{
                     reacesResult: reacesResult,
                     
                 }
+            } else {
+                return {
+                    user: queryUser,
+                    reacesResult: "You have no races result",
+                }
             }
         }
         

@@ -50,7 +50,7 @@ model Races {
   event       Events        @relation(fields: [event_id], references: [id])
   event_id    Int
   name        String        @unique
-  date        String?
+  date        String
   cover_img   String?
   logo_img    String?
   start_time  String
@@ -60,21 +60,24 @@ model Races {
 }
 
 model Category {
-  id        Int    @id @default(autoincrement())
-  Races     Races? @relation(fields: [races_Id], references: [id])
-  event     Events @relation(fields: [event_id], references: [id])
-  event_id  Int
-  races_Id  Int
-  max_point Int
-  distance  Int
+  id          Int           @id @default(autoincrement())
+  Races       Races?        @relation(fields: [races_Id], references: [id])
+  event       Events        @relation(fields: [event_id], references: [id])
+  event_id    Int
+  races_Id    Int
+  max_point   Int
+  distance    Int
+  Race_result Race_result[]
 }
 
 model Race_result {
-  id           Int      @id @default(autoincrement())
-  race         Races    @relation(fields: [Races_id], references: [id])
+  id           Int       @id @default(autoincrement())
+  race         Races     @relation(fields: [Races_id], references: [id])
   Races_id     Int
   //UserRunx      UserRunX @relation(fields: [runx_id], references: [id])
   runx_id      Int?
+  Category     Category? @relation(fields: [categoryId], references: [id])
+  categoryId   Int
   rank         Int
   time         String
   firstname    String
@@ -82,8 +85,9 @@ model Race_result {
   gender       String
   age_group    String
   nationality  String
-  claim_status Boolean  @default(false)
-  time_stamp   DateTime @default(now())
+  claim_status Boolean   @default(false)
+  time_stamp   DateTime  @default(now())
+  
 }
 
 model Admin {

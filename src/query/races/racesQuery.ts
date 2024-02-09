@@ -18,12 +18,8 @@ export const createRace = async (race: any, params: any) =>{
                 org_id: parseInt(params.org) ,
                 event_id: parseInt(params.event) ,
                 name: race.name,
-                date: new Date(race.date),
-                start_time: race.start_time,
-                max_point: race.max_point,
-                distance: race.distance
-
-            
+                date: race.date,
+                start_time: race.start_time
             }
         })
         return true
@@ -33,13 +29,14 @@ export const createRace = async (race: any, params: any) =>{
     } 
 }
 
-export async function uploadDataToRaces(db: PrismaClient, raceId: string, dataRace_result: interface_.ExcelUploadRuner[]) {
+export async function uploadDataToRaces(db: PrismaClient, raceId: string, categoryId: string, dataRace_result: interface_.ExcelUploadRuner[]) {
     const dataConvert =  dataRace_result.map((item,i) => {
         var name = item.Name.split(" ")
         const firstname: string = name[0]
         const lastname: string = name[1]
         return {
             Races_id: parseID(raceId),
+            categoryId: parseID(categoryId),
             rank: item.Rank,
             time: item.Gun_Time,
             firstname: firstname,

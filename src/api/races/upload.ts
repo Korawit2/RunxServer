@@ -9,7 +9,7 @@ const db = new PrismaClient()
 
 export const appUpload = new Elysia()
 
-.post('/upload', async ({ body: { excelFile, raceId }, set  }) => {
+.post('/upload', async ({ body: { excelFile, raceId, categoryId }, set  }) => {
 
     const columnsField = ['Name','Gender','Age_Group','Gun_Time','Rank','Nationality'];
     var workbook = XLSX.read(await excelFile.arrayBuffer(), { type: "array" });
@@ -21,7 +21,7 @@ export const appUpload = new Elysia()
         const columnValidate = columnsField.every(field => selectFirstRow.hasOwnProperty(field));
 
     if (columnValidate) {
-        const response = await uploadDataToRaces(db, raceId, sheetJSON_)
+        const response = await uploadDataToRaces(db, raceId, categoryId, sheetJSON_)
 
         return {
             success:true,
@@ -45,7 +45,8 @@ export const appUpload = new Elysia()
 },{
     body: t.Object({
     excelFile: t.File(),
-    raceId: t.String()
+    raceId: t.String(),
+    categoryId: t.String()
 })
 })
 

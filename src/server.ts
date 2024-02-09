@@ -33,7 +33,7 @@ const app = new Elysia()
   
   .use(appUser)
   .use(appAdmin)
-  
+
   .use(appgetEventPlugin)
   .use(appPlugin)
   .use(appgetfillterEventPlugin)

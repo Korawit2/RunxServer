@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { appUpload } from '../api/races/upload'
 import { appPostOrgPlugin, appgetOrgPlugin } from '../api/org_Events/Organization'
-import { appEventPlugin, appgetEventPlugin } from '../api/org_Events/Events'
+import { appEventPlugin } from '../api/org_Events/Events'
 import { appRacesPlugin, getraces } from '../api/races/races'
 
 export const appAdmin = new Elysia()
@@ -23,5 +23,4 @@ export const appAdmin = new Elysia()
                 .use(appRacesPlugin)
                 .use(getraces)
                 .use(appgetOrgPlugin)
-                .use(appgetEventPlugin)
     )

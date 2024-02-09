@@ -7,15 +7,6 @@ const db = new PrismaClient()
 
 
 export const appEventPlugin = new Elysia()
-
-    .get("/events", () => {
-        return db.events.findMany({
-        include: {
-            Races: true,
-        },
-    }
-        )
-    })
     .post("/events", async ({body, set})=> {
         const eventBody = body
         try {
@@ -39,13 +30,20 @@ export const appEventPlugin = new Elysia()
         })
     })
 export const appgetEventPlugin = new Elysia()
-    .get("/events", () => {
-        return db.events.findMany({
+    .post("/events/:id", ({params}) => {
+        const Id = params.id
+        return db.events.findUnique({
         include: {
-            Races: true,
+            Races: {
+                include: {
+                    Category: true
+                }
+            }
         },
-    }
-        )
+        where: {
+            id: parseInt(Id)
+        }
+    })
     })
 
 export const appgetfillterEventPlugin = new Elysia()
