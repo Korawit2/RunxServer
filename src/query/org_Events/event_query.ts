@@ -60,62 +60,105 @@ export const eventFilter = async  (filter:{ country?: string, distance?: string,
             }
             
         }
-        var categoryData : any
-        if (Object.keys(categoryFilter).length > 0) {
-            categoryData = await db.category.findMany({
-                where: {
-                    ...categoryFilter
-                },
-                select: {
-                    races_Id: true
-                }
-            });  
-            console.log(categoryData)
-            const raceDataObject: number[] = [];
-            for (let i = 0; i < categoryData.length; i++) {
-                const element = categoryData[i];
-                //console.log(element)
-                const raceData = await db.races.findMany({
-                    where:{
-                        id: element.races_Id,
-                        ...racetFilter
-                    },
-                    select: {
-                        event_id: true
+        const events = await db.events.findMany({
+            where: {
+                Category: {
+                    some: {
+                        ...categoryFilter
                     }
-
-            })
-            if (Object.keys(raceData).length > 0) {
-                if (raceDataObject.indexOf(raceData[0].event_id) == -1) {
-                    raceDataObject.push(raceData[0].event_id)
-                }  
-                
+                },
+                Races: {
+                    some: {
+                        ...racetFilter
+                    }
+                },
+                ...eventFilter
             }
-            //console.log(raceData)
-            }
-        //console.log(categoryData)
-            console.log(raceDataObject)
-            const eventsData: any = []
-            for (let i = 0; i < raceDataObject.length; i++) {
-                const element = raceDataObject[i];
-                const eventDataquery = await db.events.findMany({
-                    where:{
-                        id: element,
-                        ...filterQuery
-                    },
-                })
-                if (Object.keys(eventDataquery).length > 0) {
-                    eventsData.push(eventDataquery)
-                }
-            }
-            return eventsData
-        }
-        const eventDataquery = await db.events.findMany({
-            where:{
-                ...filterQuery
-            },
         })
-        return eventDataquery
+        return events
+
+        // var categoryData : any
+        // if (Object.keys(categoryFilter).length > 0) {
+        //     categoryData = await db.category.findMany({
+        //         where: {
+        //             ...categoryFilter
+        //         },
+        //         select: {
+        //             races_Id: true
+        //         }
+        //     });  
+        //     //console.log(categoryData)
+        //     const raceDataObject: number[] = [];
+        //     for (let i = 0; i < categoryData.length; i++) {
+        //         const element = categoryData[i];
+        //         //console.log(element)
+        //         const raceData = await db.races.findMany({
+        //             where:{
+        //                 id: element.races_Id,
+        //                 ...racetFilter
+        //             },
+        //             select: {
+        //                 event_id: true
+        //             }
+
+        //     })
+        //         if (Object.keys(raceData).length > 0) {
+        //             if (raceDataObject.indexOf(raceData[0].event_id) == -1) {
+        //                 raceDataObject.push(raceData[0].event_id)
+        //             }  
+                    
+        //         }
+        //     //console.log(raceData)
+        //     }
+        // //console.log(categoryData)
+        //     //console.log(raceDataObject)
+        //     const eventsData: any = []
+        //     for (let i = 0; i < raceDataObject.length; i++) {
+        //         const element = raceDataObject[i];
+        //         const eventDataquery = await db.events.findMany({
+        //             where:{
+        //                 id: element,
+        //                 ...filterQuery
+        //             },
+        //         })
+        //         if (Object.keys(eventDataquery).length > 0) {
+        //             eventsData.push(eventDataquery)
+        //         }
+        //     }
+        //     return eventsData
+        // }
+        // if (Object.keys(racetFilter).length > 0) {
+        //     const racseData = await db.races.findMany({
+        //         where:{
+        //             ...racetFilter
+        //         },
+        //         select: {
+        //             event_id: true
+        //         }})
+        //         //console.log(racseData)
+            
+        //     //console.log(racseData)
+        //     const eventsData: any = []
+        //     for (let i = 0; i < racseData.length; i++) {
+        //         const element = racseData[i];
+        //         const eventDataquery = await db.events.findMany({
+        //             where:{
+        //                 id: element.event_id,
+        //                 ...filterQuery
+        //             },
+        //         })
+        //         if (Object.keys(eventDataquery).length > 0) {
+        //             eventsData.push(eventDataquery)
+        //         }
+        //     }
+        //     return eventsData
+        // }
+        // const eventDataquery = await db.events.findMany({
+        //     where:{
+        //         ...filterQuery
+        //     },
+        // })
+        // return eventDataquery
         
     } catch (error) {
         console.log('error',error)
