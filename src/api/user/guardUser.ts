@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import {getUserByEmail,  getAllUser, updateUserOption, updateUser} from '../../query/user/guarduserQuery';
+import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint} from '../../query/user/guarduserQuery';
 import * as interface_ from "../../interface";
 
 
@@ -47,7 +47,7 @@ export const appUserguardPlugin = new Elysia()
         }
         const res = await updateUser(userBody, profile)
         if (res.status == "ok") {
-            const user = await getUserByEmail(profile.email)
+            const user: any = await getUserByEmail(profile.email)
             return {
                 message: "Edit successful",
                 user: user.user
@@ -74,6 +74,23 @@ export const appUserguardPlugin = new Elysia()
         })
     })
 
-.post("/claim/:id", () =>{
-    
+.post("/claim/:resultId/:runxId", async ({params, set}) =>{
+    try {
+        const claim: any = await claimPoint(params)
+        if (claim) {
+            return {
+                runx_id: claim.runx_id,
+                Races_id: claim.id,
+                message: "claim successful"
+            }
+        }
+        return {
+            message: "claim fail"
+        }
+        
+    } catch  (error) {
+        set.status = 500
+        return {
+            message: "claim fail"     
+        }}
 })

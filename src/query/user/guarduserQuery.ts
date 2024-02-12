@@ -18,23 +18,14 @@ export const getUserByEmail = async (profile :string) =>{
                 }
             })
             if (Object.keys(reacesResult).length != 0) {
-                // const score: interface_.ObjectSort = {};
-                // score["score"] = 100
-                // const userWithScore: any = {
-                //     ...queryUser,
-                //     score: 100,
-                // };
-                // console.log(userWithScore)
                 for (let i = 0; i < reacesResult.length; i++) {
                     const count = await db.race_result.findMany({
                         where: {
                             Races_id: reacesResult[i].Races_id
                         },
-
                     })
                     const range: number = count.length/3
                     range.toFixed(0)
-                    //console.log(range)
                     if (reacesResult[0].rank < range) {
                         const resultWithScore: any = {
                             detail: reacesResult,
@@ -47,7 +38,6 @@ export const getUserByEmail = async (profile :string) =>{
                     }
                     const range2 : number =  count.length - range
                     range2.toFixed(0)
-                    //console.log(range2)
                     if (range <= reacesResult[0].rank && reacesResult[0].rank <= range2) {
                         const resultWithScore: any = {
                             detail: reacesResult,
@@ -68,10 +58,7 @@ export const getUserByEmail = async (profile :string) =>{
                             reacesResult: resultWithScore,
                         }
                     }
-                    
-                    
                 }
-                
             } else {
                 return {
                     user: queryUser,
@@ -79,9 +66,6 @@ export const getUserByEmail = async (profile :string) =>{
                 }
             }
         }
-        
-        //console.log(Object.keys(reacesResult).length)
-        
         return {
             user: queryUser,
             reacesResult: "user must edit nationality",
@@ -142,3 +126,23 @@ export const updateUser = async (userBody: any, userEmail: string) =>{
         return { status: "fail"}
     } 
 }
+
+
+export const claimPoint = async (params: {resultId: any, runxId: any}) =>{
+    try {   
+        const claimed = db.race_result.update({
+            where: {
+                id: parseInt(params.resultId)
+            },
+            data: {
+                runx_id: parseInt( params.runxId),
+                time_stamp: new Date()
+            },
+        })
+        return claimed
+    } catch (error) {
+        console.log('error',error)
+        return { status: "fail"}
+    } 
+}
+

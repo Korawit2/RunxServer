@@ -24,6 +24,7 @@ model UserRunX {
   nationality    String?
   policy         Boolean
   user_img       String?
+  total_point    Int?
   //Race_result    Race_result[]
 }
 

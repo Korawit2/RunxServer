@@ -27,7 +27,7 @@ export const createEvent = async (events: any) =>{
     } 
 }
 
-export const eventFilter = async  (filter:{ country?: string, distance?: string, year: string, title: string }) =>{
+export const eventFilter = async  (filter:{ country?: string, distance?: string, year?: string, title?: string }) =>{
     try {
         const filterQuery: interface_.ObjectSort = {};
         const racetFilter: interface_.ObjectSort = {};
