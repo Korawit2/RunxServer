@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 const db = new PrismaClient()
-
+import * as interface_ from "../../interface";
 
 export const getUserByEmail = async (profile :string) =>{
     try {
@@ -18,11 +18,60 @@ export const getUserByEmail = async (profile :string) =>{
                 }
             })
             if (Object.keys(reacesResult).length != 0) {
-                return {
-                    user: queryUser,
-                    reacesResult: reacesResult,
+                // const score: interface_.ObjectSort = {};
+                // score["score"] = 100
+                // const userWithScore: any = {
+                //     ...queryUser,
+                //     score: 100,
+                // };
+                // console.log(userWithScore)
+                for (let i = 0; i < reacesResult.length; i++) {
+                    const count = await db.race_result.findMany({
+                        where: {
+                            Races_id: reacesResult[i].Races_id
+                        },
+
+                    })
+                    const range: number = count.length/3
+                    range.toFixed(0)
+                    //console.log(range)
+                    if (reacesResult[0].rank < range) {
+                        const resultWithScore: any = {
+                            detail: reacesResult,
+                            score: 3,
+                        };
+                        return {
+                            user: queryUser,
+                            reacesResult: resultWithScore,
+                        }
+                    }
+                    const range2 : number =  count.length - range
+                    range2.toFixed(0)
+                    //console.log(range2)
+                    if (range <= reacesResult[0].rank && reacesResult[0].rank <= range2) {
+                        const resultWithScore: any = {
+                            detail: reacesResult,
+                            score: 2,
+                        };
+                        return {
+                            user: queryUser,
+                            reacesResult: resultWithScore,
+                        }
+                    }
+                    if (reacesResult[0].rank >= range2 && reacesResult[0].rank <= count.length) {
+                        const resultWithScore: any = {
+                            detail: reacesResult,
+                            score: 1,
+                        };
+                        return {
+                            user: queryUser,
+                            reacesResult: resultWithScore,
+                        }
+                    }
+                    
                     
                 }
+                
             } else {
                 return {
                     user: queryUser,

@@ -50,6 +50,7 @@ model Races {
   event       Events        @relation(fields: [event_id], references: [id])
   event_id    Int
   name        String        @unique
+  state       String?
   date        String
   cover_img   String?
   logo_img    String?
@@ -86,8 +87,7 @@ model Race_result {
   age_group    String
   nationality  String
   claim_status Boolean   @default(false)
-  time_stamp   DateTime  @default(now())
-  
+  time_stamp   DateTime?
 }
 
 model Admin {

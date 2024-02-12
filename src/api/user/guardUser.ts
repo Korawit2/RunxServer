@@ -73,3 +73,7 @@ export const appUserguardPlugin = new Elysia()
         user_img: t.Optional(t.String())
         })
     })
+
+.post("/claim/:id", () =>{
+    
+})
