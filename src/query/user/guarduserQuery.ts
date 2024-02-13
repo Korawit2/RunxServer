@@ -18,46 +18,41 @@ export const getUserByEmail = async (profile :string) =>{
                 }
             })
             if (Object.keys(reacesResult).length != 0) {
+                var result: any = []
                 for (let i = 0; i < reacesResult.length; i++) {
                     const count = await db.race_result.findMany({
                         where: {
                             Races_id: reacesResult[i].Races_id
                         },
                     })
-                    const range: number = count.length/3
-                    range.toFixed(0)
-                    if (reacesResult[0].rank < range) {
-                        const resultWithScore: any = {
-                            detail: reacesResult,
-                            score: 3,
+                    if (reacesResult[i].rank <= 500) {
+                        var score: number = 1000/Math.log2(reacesResult[i].rank + 1)
+                        const resultWithScore = {
+                            detail: reacesResult[i],
+                            score: score.toFixed(2),
                         };
-                        return {
-                            user: queryUser,
-                            reacesResult: resultWithScore,
-                        }
+                        result.push(resultWithScore)
                     }
-                    const range2 : number =  count.length - range
-                    range2.toFixed(0)
-                    if (range <= reacesResult[0].rank && reacesResult[0].rank <= range2) {
-                        const resultWithScore: any = {
-                            detail: reacesResult,
-                            score: 2,
+                    if ( 500 < reacesResult[i].rank && reacesResult[i].rank <= 1000 ) {
+                        const resultWithScore = {
+                            detail: reacesResult[i],
+                            score: 100,
                         };
-                        return {
-                            user: queryUser,
-                            reacesResult: resultWithScore,
-                        }
+                        result.push(resultWithScore)
+                        
                     }
-                    if (reacesResult[0].rank >= range2 && reacesResult[0].rank <= count.length) {
-                        const resultWithScore: any = {
-                            detail: reacesResult,
-                            score: 1,
+                    if (reacesResult[i].rank > 1000) {
+                        const resultWithScore = {
+                            detail: reacesResult[i],
+                            score: 50,
                         };
-                        return {
-                            user: queryUser,
-                            reacesResult: resultWithScore,
-                        }
+                        result.push(resultWithScore)
+                        
                     }
+                }
+                return {
+                    queryUser,
+                    reacesResult: result,
                 }
             } else {
                 return {
@@ -107,7 +102,7 @@ export const updateUserOption = async (userBody: any, userEmail: string) =>{
 
 export const updateUser = async (userBody: any, userEmail: string) =>{
     try {   
-        const updateUser = await db.userRunX.update({
+        const updateUser: any = await db.userRunX.update({
             where: {
                 email: userEmail.email
             },
@@ -136,7 +131,8 @@ export const claimPoint = async (params: {resultId: any, runxId: any}) =>{
             },
             data: {
                 runx_id: parseInt( params.runxId),
-                time_stamp: new Date()
+                time_stamp: new Date(),
+                claim_status : true
             },
         })
         return claimed
@@ -145,4 +141,47 @@ export const claimPoint = async (params: {resultId: any, runxId: any}) =>{
         return { status: "fail"}
     } 
 }
+
+
+export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
+    try {   
+        var totalPoint: number = 0
+        const reacesResult = await db.race_result.findMany({
+            where: {
+                runx_id: runxId
+            },
+            select: {
+                Races_id: true,
+                rank: true
+            }
+        })
+        if (Object.keys(reacesResult).length != 0) {
+            
+            for (let i = 0; i < reacesResult.length; i++) {
+                if (reacesResult[i].rank <= 500) {
+                    var score: number = 1000/Math.log2(reacesResult[i].rank + 1)
+                    totalPoint = totalPoint + score
+                    
+                }
+                if (500 < reacesResult[i].rank && reacesResult[i].rank <= 1000) {
+                    totalPoint = totalPoint + 100
+                    
+                }
+                if (reacesResult[i].rank > 1000) {
+                    totalPoint = totalPoint + 50
+                    
+                }
+
+            }
+            const final_total_point  = totalPoint.toFixed(2)
+            return final_total_point
+        }
+    } catch (error) {
+        console.log('error',error)
+        return { status: "fail"}
+    } 
+}
+
+
+
 

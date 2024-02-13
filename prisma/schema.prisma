@@ -24,7 +24,6 @@ model UserRunX {
   nationality    String?
   policy         Boolean
   user_img       String?
-  total_point    Int?
   //Race_result    Race_result[]
 }
 
@@ -41,7 +40,7 @@ model Events {
   logo_img  String?
   country   String
   Races     Races[]
-  Category  Category[]
+  //Category  Category[]
 }
 
 model Races {
@@ -56,30 +55,31 @@ model Races {
   cover_img   String?
   logo_img    String?
   start_time  String
+  distance    Int?
   time_stamp  DateTime      @default(now())
   Race_result Race_result[]
-  Category    Category[]
+  //Category    Category[]
 }
 
-model Category {
-  id          Int           @id @default(autoincrement())
-  Races       Races?        @relation(fields: [races_Id], references: [id])
-  event       Events        @relation(fields: [event_id], references: [id])
-  event_id    Int
-  races_Id    Int
-  max_point   Int
-  distance    Int
-  Race_result Race_result[]
-}
+// model Category {
+//   id          Int           @id @default(autoincrement())
+//   Races       Races?        @relation(fields: [races_Id], references: [id])
+//   event       Events        @relation(fields: [event_id], references: [id])
+//   event_id    Int
+//   races_Id    Int
+//   max_point   Int
+//   distance    Int
+//   Race_result Race_result[]
+// }
 
 model Race_result {
   id           Int       @id @default(autoincrement())
   race         Races     @relation(fields: [Races_id], references: [id])
   Races_id     Int
-  //UserRunx      UserRunX @relation(fields: [runx_id], references: [id])
+  //UserRunx     UserRunX @relation(fields: [runx_id], references: [id])
   runx_id      Int?
-  Category     Category? @relation(fields: [categoryId], references: [id])
-  categoryId   Int
+  // Category     Category? @relation(fields: [categoryId], references: [id])
+  // categoryId   Int
   rank         Int
   time         String
   firstname    String

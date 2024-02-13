@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint} from '../../query/user/guarduserQuery';
+import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint, totalPoint} from '../../query/user/guarduserQuery';
 import * as interface_ from "../../interface";
 
 
@@ -13,11 +13,14 @@ export const appUserguardPlugin = new Elysia()
 .get("/curentuser", async ({profile}) => {
     if (profile.role == "user") {
         const user: any = await getUserByEmail(profile.email)
-        
-        return user
+        const total_Point: any =  await totalPoint(user.queryUser.id)
+        const resultWithScore: any = {
+            totalPoint: total_Point,
+            user
+            
+        };
+        return resultWithScore
     }
-    console.log("admin access")
-    
 })
 
 .post("/edit/user/", async ({body, set, profile})=> {
