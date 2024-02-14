@@ -7,6 +7,17 @@ export const getUserByEmail = async (profile :string) =>{
         const queryUser = await db.userRunX.findUnique({
             where: {
                 email: profile
+            },
+            select:{
+                id: true,
+                firstname_eng: true,
+                lastname_eng: true,
+                birth_date: true,
+                gender: true,
+                email: true,
+                id_passport: true,
+                nationality: true,
+                user_img: true,
             }
         })
         if (queryUser?.nationality) {
@@ -56,13 +67,13 @@ export const getUserByEmail = async (profile :string) =>{
                 }
             } else {
                 return {
-                    user: queryUser,
+                    queryUser,
                     reacesResult: "You have no races result",
                 }
             }
         }
         return {
-            user: queryUser,
+            queryUser,
             reacesResult: "user must edit nationality",
         }
         
@@ -107,8 +118,6 @@ export const updateUser = async (userBody: any, userEmail: string) =>{
                 email: userEmail.email
             },
             data: {
-                firstname_thai: userBody.firstname_thai,
-                lastname_thai: userBody.lastname_thai,
                 birth_date: new Date(userBody.birth_date),
                 gender: userBody.gender,
                 id_passport: userBody.id_passport,

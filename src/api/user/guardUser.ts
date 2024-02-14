@@ -26,7 +26,6 @@ export const appUserguardPlugin = new Elysia()
 .post("/edit/user/", async ({body, set, profile})=> {
     try {
         const userBody = body;
-        console.log(userBody)
         const Editdata: interface_.ObjectSort = {};
         var editOption: boolean = false
         if (userBody.firstname_eng) {
@@ -41,8 +40,16 @@ export const appUserguardPlugin = new Elysia()
             Editdata["email"] = userBody.email
             editOption = true
         }
-        if (userBody.email) {
+        if (userBody.user_img) {
             Editdata["user_img"] = userBody.user_img
+            editOption = true
+        }
+        if (userBody.firstname_thai) {
+            Editdata["firstname_thai"] = userBody.firstname_thai
+            editOption = true
+        }
+        if (userBody.user_img) {
+            Editdata["lastname_thai"] = userBody.lastname_thai
             editOption = true
         }
         if (editOption) {
@@ -66,8 +73,8 @@ export const appUserguardPlugin = new Elysia()
         body: t.Object({
         firstname_eng: t.Optional(t.String()),
         lastname_eng: t.Optional(t.String()),
-        firstname_thai: t.String(),
-        lastname_thai: t.String(),
+        firstname_thai: t.Optional(t.String()),
+        lastname_thai: t.Optional(t.String()),
         birth_date: t.String(),
         gender: t.String(),
         id_passport: t.String(),
