@@ -55,7 +55,7 @@ model Races {
   cover_img   String?
   logo_img    String?
   start_time  String
-  distance    Int?
+  distance    Int
   time_stamp  DateTime      @default(now())
   Race_result Race_result[]
   //Category    Category[]

@@ -5,6 +5,7 @@ googleclound.json
 /node_modules
 /.pnp
 .pnp.js
+prisma/migrations
 
 # testing
 /coverage
@@ -42,6 +43,3 @@ yarn-error.log*
 **/*.log
 package-lock.json
 **/*.bun
-
-
-

@@ -29,7 +29,7 @@ export const getUserByEmail = async (profile :string) =>{
                         var score: number = 1000/Math.log2(reacesResult[i].rank + 1)
                         const resultWithScore = {
                             detail: reacesResult[i],
-                            score: score.toFixed(2),
+                            score: score.toFixed(0),
                         };
                         result.push(resultWithScore)
                     }
@@ -173,7 +173,7 @@ export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
                 }
 
             }
-            const final_total_point  = totalPoint.toFixed(2)
+            const final_total_point  = totalPoint.toFixed(0)
             return final_total_point
         }
     } catch (error) {
