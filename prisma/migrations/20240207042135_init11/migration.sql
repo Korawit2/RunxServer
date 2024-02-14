@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Races" ALTER COLUMN "date" DROP NOT NULL;
