@@ -30,11 +30,11 @@ export const appRacesPlugin = new Elysia()
         }
     },{
         body: t.Object({
-        name: t.String(),
-        date: t.String(),
-        start_time: t.String(),
-        max_point: t.Number(),
-        distance: t.Number()
+            name: t.String(),
+            date: t.String(),
+            state: t.String(),
+            start_time: t.String(),
+            distance: t.Number()
         })
     })
 

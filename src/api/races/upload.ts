@@ -21,7 +21,7 @@ export const appUpload = new Elysia()
         const columnValidate = columnsField.every(field => selectFirstRow.hasOwnProperty(field));
 
     if (columnValidate) {
-        const response = await uploadDataToRaces(db, raceId, categoryId, sheetJSON_)
+        const response = await uploadDataToRaces(db, raceId, sheetJSON_)
 
         return {
             success:true,
@@ -45,8 +45,7 @@ export const appUpload = new Elysia()
 },{
     body: t.Object({
     excelFile: t.File(),
-    raceId: t.String(),
-    categoryId: t.String()
+    raceId: t.String()
 })
 })
 

@@ -34,11 +34,7 @@ export const appgetEventPlugin = new Elysia()
         const Id = params.id
         return db.events.findUnique({
         include: {
-            Races: {
-                include: {
-                    Category: true
-                }
-            }
+            Races: true
         },
         where: {
             id: parseInt(Id)
