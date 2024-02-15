@@ -84,15 +84,18 @@ export const appUserguardPlugin = new Elysia()
         })
     })
 
-.post("/claim/:resultId/:runxId", async ({params, set}) =>{
+.post("/claim/:resultId/:runxId", async ({params, set, profile}) =>{
     try {
-        const claim: any = await claimPoint(params)
+        const claim: any = await claimPoint(params, profile)
         if (claim) {
-            return {
-                runx_id: claim.runx_id,
-                Races_id: claim.id,
-                message: "claim successful"
+            if (claim.status) {
+                return {
+                    runx_id: params.runxId,
+                    Races_id: params.resultId,
+                    message: "claim successful"
+                }
             }
+            return "you have no right to claim this point"
         }
         return {
             message: "claim fail"

@@ -26,37 +26,58 @@ export const getUserByEmail = async (profile :string) =>{
                     firstname: queryUser?.firstname_eng,
                     lastname: queryUser?.lastname_eng,
                     nationality: queryUser?.nationality
+                },
+                select: {
+                    id: true,
+                    Races_id: true,
+                    rank: true,
+                    time: true,
+                    claim_status: true
                 }
             })
             if (Object.keys(reacesResult).length != 0) {
                 var result: any = []
                 for (let i = 0; i < reacesResult.length; i++) {
-                    const count = await db.race_result.findMany({
+                    const AllRaceresultId : any = await db.race_result.aggregate({
+                        _count: {
+                            Races_id: true,
+                        },
                         where: {
                             Races_id: reacesResult[i].Races_id
-                        },
+                        }
                     })
-                    if (reacesResult[i].rank <= 500) {
-                        var score: number = 1000/Math.log2(reacesResult[i].rank + 1)
-                        const resultWithScore = {
-                            detail: reacesResult[i],
-                            score: score.toFixed(0),
-                        };
+                    
+                    const event: any = await db.races.findMany({
+                        where: {
+                            Race_result: {
+                                some:{
+                                    Races_id: reacesResult[i].Races_id
+                                }
+                            }
+                        },
+                        select:{
+                            date: true,
+                            name: true,
+                            distance: true
+                        }
+                    })
+                    //console.log(event)
+                    if ( parseInt(reacesResult[i].rank)  <= 500) {
+                        var score: number = 1000/Math.log2(parseInt(reacesResult[i].rank)  + 1)
+                        reacesResult[i].rank = `${reacesResult[i].rank}/${AllRaceresultId._count.Races_id}`
+                        const resultWithScore = await detailasync(reacesResult[i], event, score)
                         result.push(resultWithScore)
                     }
-                    if ( 500 < reacesResult[i].rank && reacesResult[i].rank <= 1000 ) {
-                        const resultWithScore = {
-                            detail: reacesResult[i],
-                            score: 100,
-                        };
+                    if ( 500 < parseInt(reacesResult[i].rank)  && parseInt(reacesResult[i].rank)  <= 1000 ) {
+                        reacesResult[i].rank = `${reacesResult[i].rank}/${AllRaceresultId._count.Races_id}`
+                        const resultWithScore = await detailasync(reacesResult[i], event, 100)
                         result.push(resultWithScore)
                         
                     }
-                    if (reacesResult[i].rank > 1000) {
-                        const resultWithScore = {
-                            detail: reacesResult[i],
-                            score: 50,
-                        };
+                    if (parseInt(reacesResult[i].rank)  > 1000) {
+                        reacesResult[i].rank = `${reacesResult[i].rank}/${AllRaceresultId._count.Races_id}`
+                        const resultWithScore = await detailasync(reacesResult[i], event, 50)
+                        result.push(resultWithScore)
                         result.push(resultWithScore)
                         
                     }
@@ -93,12 +114,12 @@ export const getAllUser = () =>{
     } 
 }
 
-export const updateUserOption = async (userBody: any, userEmail: string) =>{
+export const updateUserOption = async (userBody: any, userEmail: { email: string}) =>{
     try {   
         
         const updateUser = await db.userRunX.update({
             where: {
-                email: userEmail
+                email: userEmail.email
             },
             data: {
                 ...userBody
@@ -111,7 +132,7 @@ export const updateUserOption = async (userBody: any, userEmail: string) =>{
     } 
 }
 
-export const updateUser = async (userBody: any, userEmail: string) =>{
+export const updateUser = async (userBody: any,  userEmail: { email: string}) =>{
     try {   
         const updateUser: any = await db.userRunX.update({
             where: {
@@ -132,19 +153,40 @@ export const updateUser = async (userBody: any, userEmail: string) =>{
 }
 
 
-export const claimPoint = async (params: {resultId: any, runxId: any}) =>{
+export const claimPoint = async (params: {resultId: any, runxId: any}, profile: {email: string}) =>{
     try {   
-        const claimed = db.race_result.update({
+        console.log(params)
+        const checkEmailAndId : any = await db.userRunX.aggregate({
+            _count: {
+                email: true,
+            },
             where: {
-                id: parseInt(params.resultId)
-            },
-            data: {
-                runx_id: parseInt( params.runxId),
-                time_stamp: new Date(),
-                claim_status : true
-            },
+                email: profile.email,
+                id: parseInt(params.runxId) 
+            }
         })
-        return claimed
+        console.log(checkEmailAndId)
+        if (checkEmailAndId._count.email > 0) {
+            const query = db.userRunX.findMany()
+            // const claimed = db.race_result.update({
+            //     where: {
+            //         id: parseInt(params.resultId)
+            //     },
+            //     data: {
+            //         runx_id: parseInt(params.runxId),
+            //         time_stamp: new Date(),
+            //         claim_status : true
+            //     },
+            // })
+            console.log(query)
+            return {
+                status: true,
+               // claimed
+            }
+        }
+        return {
+            status: false
+        }
     } catch (error) {
         console.log('error',error)
         return { status: "fail"}
@@ -167,16 +209,16 @@ export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
         if (Object.keys(reacesResult).length != 0) {
             
             for (let i = 0; i < reacesResult.length; i++) {
-                if (reacesResult[i].rank <= 500) {
-                    var score: number = 1000/Math.log2(reacesResult[i].rank + 1)
+                if (parseInt(reacesResult[i].rank)  <= 500) {
+                    var score: number = 1000/Math.log2(parseInt(reacesResult[i].rank)  + 1)
                     totalPoint = totalPoint + score
                     
                 }
-                if (500 < reacesResult[i].rank && reacesResult[i].rank <= 1000) {
+                if (500 < parseInt(reacesResult[i].rank)  && parseInt(reacesResult[i].rank)  <= 1000) {
                     totalPoint = totalPoint + 100
                     
                 }
-                if (reacesResult[i].rank > 1000) {
+                if (parseInt(reacesResult[i].rank)  > 1000) {
                     totalPoint = totalPoint + 50
                     
                 }
@@ -185,11 +227,30 @@ export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
             const final_total_point  = totalPoint.toFixed(0)
             return final_total_point
         }
+        return totalPoint
     } catch (error) {
         console.log('error',error)
         return { status: "fail"}
     } 
 }
+
+
+const detailasync =  async (race: any, event: any, score: number) =>{
+    console.log()
+    return {
+        ResultId: race.id,
+        Races_id: race.Races_id,
+        date: event[0].date,
+        name: event[0].name,
+        distance: `${event[0].distance}KM`,
+        rank: race.rank,
+        time: race.time,
+        claim_status: race.claim_status,
+        score : score.toFixed(0)
+        
+    }
+}
+
 
 
 
