@@ -1,6 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { appuploadImg } from "./api/user/uploadimg";
+import { getraces } from "./api/races/races";
 import { cors } from "@elysiajs/cors";
 import { swagger } from '@elysiajs/swagger'
 import { appPlugin } from './api/user/user'
@@ -33,7 +34,8 @@ const app = new Elysia()
   
   .use(appUser)
   .use(appAdmin)
-
+  
+  .use(getraces)
   .use(appgetEventPlugin)
   .use(appPlugin)
   .use(appgetfillterEventPlugin)

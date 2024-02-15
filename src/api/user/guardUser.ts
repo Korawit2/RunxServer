@@ -8,8 +8,6 @@ import * as interface_ from "../../interface";
 const db = new PrismaClient()
 export const appUserguardPlugin = new Elysia()
 
-.get("/all", () => getAllUser())
-
 .get("/curentuser", async ({profile}) => {
     if (profile.role == "user") {
         const user: any = await getUserByEmail(profile.email)
@@ -48,7 +46,7 @@ export const appUserguardPlugin = new Elysia()
             Editdata["firstname_thai"] = userBody.firstname_thai
             editOption = true
         }
-        if (userBody.user_img) {
+        if (userBody.lastname_thai) {
             Editdata["lastname_thai"] = userBody.lastname_thai
             editOption = true
         }

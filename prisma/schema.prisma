@@ -80,7 +80,7 @@ model Race_result {
   runx_id      Int?
   // Category     Category? @relation(fields: [categoryId], references: [id])
   // categoryId   Int
-  rank         String
+  rank         Int
   time         String
   firstname    String
   lastname     String

@@ -61,22 +61,18 @@ export const getUserByEmail = async (profile :string) =>{
                             distance: true
                         }
                     })
-                    //console.log(event)
-                    if ( parseInt(reacesResult[i].rank)  <= 500) {
-                        var score: number = 1000/Math.log2(parseInt(reacesResult[i].rank)  + 1)
-                        reacesResult[i].rank = `${reacesResult[i].rank}/${AllRaceresultId._count.Races_id}`
-                        const resultWithScore = await detailasync(reacesResult[i], event, score)
+                    if ( reacesResult[i].rank  <= 500) {
+                        var score: number = 1000/Math.log2(reacesResult[i].rank  + 1)
+                        const resultWithScore = await detailasync(reacesResult[i], event, score, AllRaceresultId._count.Races_id)
                         result.push(resultWithScore)
                     }
-                    if ( 500 < parseInt(reacesResult[i].rank)  && parseInt(reacesResult[i].rank)  <= 1000 ) {
-                        reacesResult[i].rank = `${reacesResult[i].rank}/${AllRaceresultId._count.Races_id}`
-                        const resultWithScore = await detailasync(reacesResult[i], event, 100)
+                    if ( 500 < reacesResult[i].rank   && reacesResult[i].rank  <= 1000 ) {
+                        const resultWithScore = await detailasync(reacesResult[i], event, 100, AllRaceresultId._count.Races_id)
                         result.push(resultWithScore)
                         
                     }
-                    if (parseInt(reacesResult[i].rank)  > 1000) {
-                        reacesResult[i].rank = `${reacesResult[i].rank}/${AllRaceresultId._count.Races_id}`
-                        const resultWithScore = await detailasync(reacesResult[i], event, 50)
+                    if (reacesResult[i].rank  > 1000) {
+                        const resultWithScore = await detailasync(reacesResult[i], event, 50, AllRaceresultId._count.Races_id)
                         result.push(resultWithScore)
                         result.push(resultWithScore)
                         
@@ -155,7 +151,6 @@ export const updateUser = async (userBody: any,  userEmail: { email: string}) =>
 
 export const claimPoint = async (params: {resultId: any, runxId: any}, profile: {email: string}) =>{
     try {   
-        console.log(params)
         const checkEmailAndId : any = await db.userRunX.aggregate({
             _count: {
                 email: true,
@@ -165,23 +160,21 @@ export const claimPoint = async (params: {resultId: any, runxId: any}, profile: 
                 id: parseInt(params.runxId) 
             }
         })
-        console.log(checkEmailAndId)
         if (checkEmailAndId._count.email > 0) {
-            const query = db.userRunX.findMany()
-            // const claimed = db.race_result.update({
-            //     where: {
-            //         id: parseInt(params.resultId)
-            //     },
-            //     data: {
-            //         runx_id: parseInt(params.runxId),
-            //         time_stamp: new Date(),
-            //         claim_status : true
-            //     },
-            // })
-            console.log(query)
+            const claimed = await db.race_result.update({
+                where: {
+                    id: parseInt(params.resultId)
+                },
+                data: {
+                    runx_id: parseInt(params.runxId),
+                    time_stamp: new Date(),
+                    claim_status : true
+                },
+            })
+            
             return {
                 status: true,
-               // claimed
+                claimed
             }
         }
         return {
@@ -209,16 +202,16 @@ export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
         if (Object.keys(reacesResult).length != 0) {
             
             for (let i = 0; i < reacesResult.length; i++) {
-                if (parseInt(reacesResult[i].rank)  <= 500) {
-                    var score: number = 1000/Math.log2(parseInt(reacesResult[i].rank)  + 1)
+                if ( reacesResult[i].rank  <= 500) {
+                    var score: number = 1000/Math.log2(reacesResult[i].rank   + 1)
                     totalPoint = totalPoint + score
                     
                 }
-                if (500 < parseInt(reacesResult[i].rank)  && parseInt(reacesResult[i].rank)  <= 1000) {
+                if (500 <reacesResult[i].rank   && reacesResult[i].rank   <= 1000) {
                     totalPoint = totalPoint + 100
                     
                 }
-                if (parseInt(reacesResult[i].rank)  > 1000) {
+                if (reacesResult[i].rank   > 1000) {
                     totalPoint = totalPoint + 50
                     
                 }
@@ -235,7 +228,7 @@ export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
 }
 
 
-const detailasync =  async (race: any, event: any, score: number) =>{
+const detailasync =  async (race: any, event: any, score: number, allrace: number) =>{
     console.log()
     return {
         ResultId: race.id,
@@ -243,7 +236,7 @@ const detailasync =  async (race: any, event: any, score: number) =>{
         date: event[0].date,
         name: event[0].name,
         distance: `${event[0].distance}KM`,
-        rank: race.rank,
+        rank: `${race.rank}/${allrace}`,
         time: race.time,
         claim_status: race.claim_status,
         score : score.toFixed(0)

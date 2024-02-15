@@ -16,7 +16,7 @@ export const createEvent = async (events: any) =>{
         const users = await db.events.create({
             data: {
                 name: title,
-                country: events.location
+                country: events.country
             
             }
         })
@@ -26,6 +26,30 @@ export const createEvent = async (events: any) =>{
         return { status: 'error', error}
     } 
 }
+
+export const eventYear = async (params:any) =>{
+    try{
+        const events = await db.events.findUnique({
+            include:{
+                Races:{
+                    where:{
+                        id: parseInt(params.raceId)
+                    } 
+                }
+            },
+            where: {
+                id: parseInt(params.eventId)
+            }
+        })
+        return events
+    }  catch (error) {
+        console.log('error',error)
+        return { status: 'error', error}
+    } 
+}
+
+
+
 
 export const eventFilter = async  (filter:{ country?: string, distance?: string, year?: string, title?: string }) =>{
     try {

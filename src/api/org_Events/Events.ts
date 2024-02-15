@@ -1,16 +1,14 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 
-import {createEvent, eventFilter} from '../../query/org_Events/event_query';
+import {createEvent, eventFilter, eventYear} from '../../query/org_Events/event_query';
 
 const db = new PrismaClient()
 
 
 export const appEventPlugin = new Elysia()
     .post("/events", async ({body, set})=> {
-        const eventBody = body
         try {
-        const eventBody = body
         const res = await createEvent(body)
         if (!res) {
             return { message: "insert fail"}
@@ -26,7 +24,7 @@ export const appEventPlugin = new Elysia()
     },{
         body: t.Object({
             name: t.String(),
-            location: t.String()
+            country: t.String()
         })
     })
 export const appgetEventPlugin = new Elysia()
@@ -67,3 +65,15 @@ export const appgetfillterEventPlugin = new Elysia()
                 title: t.Optional(t.String()),
             })
         })
+    .get("/eventAtYear/:eventId/:raceId", async ({params, set}) => {
+        try {
+            const event = await eventYear(params)
+            return event
+        }  catch (error){
+            set.status = 400
+            return {
+                message: 'error',
+                error        
+            }
+        }
+    })
