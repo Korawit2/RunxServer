@@ -28,8 +28,9 @@ export const appEventPlugin = new Elysia()
         })
     })
 export const appgetEventPlugin = new Elysia()
-    .post("/events/:id", ({params}) => {
-        const Id = params.id
+    .get("/events", ({query}) => {
+        console.log(query)
+        const Id = query.id
         return db.events.findUnique({
         include: {
             Races: true
@@ -37,11 +38,15 @@ export const appgetEventPlugin = new Elysia()
         where: {
             id: parseInt(Id)
         }
-    })
+        })
+    },{
+        query: t.Object({
+            id: t.String()
+        })
     })
 
 export const appgetfillterEventPlugin = new Elysia()
-    .post("/events/filter", async ({body, set})=>{
+    .get("/events/filter", async ({body, set})=>{
         try {
             const event = await eventFilter(body)
             set.status = 200

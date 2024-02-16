@@ -34,8 +34,8 @@ model Organization {
 }
 
 model Events {
-  id        Int        @id @default(autoincrement())
-  name      String     @unique
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
   cover_img String?
   logo_img  String?
   country   String

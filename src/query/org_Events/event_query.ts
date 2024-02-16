@@ -85,44 +85,45 @@ export const eventFilter = async  (filter:{ country?: string, distance?: string,
         }
         // console.log("filterQuery", filterQuery)
         // console.log("racetFilter", racetFilter)
-        if (Object.keys(filterQuery).length == 0 &&  Object.keys(racetFilter).length == 0) {
-            const events = await db.events.findMany()
-            return events
-        }
+        // if (Object.keys(filterQuery).length == 0 &&  Object.keys(racetFilter).length == 0) {
+        //     const events = await db.events.findMany()
+        //     return events
+        // }
         if (Object.keys(filterQuery).length > 0 &&  Object.keys(racetFilter).length > 0) {
             const events = await db.events.findMany({
                 where: {
+                    ...(Object.keys(racetFilter).length > 0 && {
                     Races: {
                         some: {
                             ...racetFilter
                         }
-                    },
-                    ...filterQuery
+                    }}),
+                    ...(Object.keys(filterQuery).length > 0 && filterQuery)
                     
                 }
             })
             return events
         }
-        if (Object.keys(filterQuery).length >= 0 &&  Object.keys(racetFilter).length > 0) {
-            const events = await db.events.findMany({
-                where: {
-                    Races: {
-                        some: {
-                            ...racetFilter
-                        }
-                    },
-                }
-            })
-            return events
-        }
-        if (Object.keys(filterQuery).length > 0 &&  Object.keys(racetFilter).length >= 0) {
-            const events = await db.events.findMany({
-                where: {
-                    ...filterQuery
-                }
-            })
-            return events
-        }
+        // if ( Object.keys(racetFilter).length > 0) {
+        //     const events = await db.events.findMany({
+        //         where: {
+        //             Races: {
+        //                 some: {
+        //                     ...racetFilter
+        //                 }
+        //             },
+        //         }
+        //     })
+        //     return events
+        // }
+        // if (Object.keys(filterQuery).length > 0) {
+        //     const events = await db.events.findMany({
+        //         where: {
+        //             ...filterQuery
+        //         }
+        //     })
+        //     return events
+        // }
         ////////////////////////////////////////////////////////////////////////////
         // const events = await db.events.findMany({
         //     where: {
