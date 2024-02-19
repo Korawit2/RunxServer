@@ -46,39 +46,24 @@ export const appgetEventPlugin = new Elysia()
     })
 
 export const appgetfillterEventPlugin = new Elysia()
-    .get("/events/filter", async ({body, set})=>{
+    .get("/events/filter", async ({query, set})=>{
         try {
-            const event = await eventFilter(body)
+            const event = await eventFilter(query)
             set.status = 200
             return {
-                //status: 200,
                 data: event
             }
         } catch (error){
             set.status = 400
             return {
-                message: 'error',
-                error        
+                message: 'error'      
             }
         }
-        
         },{
-            body: t.Object({
+            query: t.Object({
                 country: t.Optional(t.String()),
                 distance: t.Optional(t.String()),
                 year:t.Optional(t.String()),
                 title: t.Optional(t.String()),
             })
         })
-    .get("/eventAtYear/:eventId/:raceId", async ({params, set}) => {
-        try {
-            const event = await eventYear(params)
-            return event
-        }  catch (error){
-            set.status = 400
-            return {
-                message: 'error',
-                error        
-            }
-        }
-    })

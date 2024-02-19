@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client'
+import { calculateScore } from '../../function/calculate'
 import * as interface_ from "../../interface";
 const db = new PrismaClient()
 
-export const createRace = async (race: any, params: any) =>{
+export const createRace = async (race: any, query: any) =>{
     try {
         const title: string = race.name
-        const query = await db.races.findUnique({
+        const queryname = await db.races.findUnique({
             where: {
                 name: title
             }
@@ -15,8 +16,8 @@ export const createRace = async (race: any, params: any) =>{
         }
         const users = await db.races.create({
             data: {
-                org_id: parseInt(params.org) ,
-                event_id: parseInt(params.event) ,
+                org_id: parseInt(query.org) ,
+                event_id: parseInt(query.event) ,
                 name: race.name,
                 date: race.date,
                 state: race.state,
@@ -58,4 +59,60 @@ export async function uploadDataToRaces(db: PrismaClient, raceId: string, dataRa
         return Number.parseInt(id, 10);
     }
 
+}
+
+export const queryRunner = async (query: any) =>{
+    try {
+        var runner: any = []
+        const filterQuery: interface_.ObjectSort = {};
+
+        if(query.name) {
+            filterQuery["OR"] = 
+            [
+                { firstname: { contains: query.name },},
+                { lastname: { contains: query.name } },
+            ]
+        }
+        if(query.gender) {
+            filterQuery["gender"] = query.gender
+        }
+        const queryRunner: any = await db.race_result.findMany({
+            where: {
+                Races_id: parseInt(query.raceId),
+                ...filterQuery
+            },
+            select:{
+                rank: true,
+                firstname: true,
+                lastname: true,
+                time: true,
+                gender: true
+            },
+            orderBy: {
+                rank: 'asc',
+            },
+        })
+        for (let i = 0; i < queryRunner.length; i++) {
+            const score: any = await calculateScore(queryRunner[i].rank)
+            const makeRunner = await formRunner(queryRunner[i], score)
+            runner.push(makeRunner)
+            
+        }
+        return runner
+    } catch (error) {
+        console.log('error',error)
+        return { status: 'error', error}
+    } 
+}
+
+const formRunner =  async ( query: any, score: number, ) =>{
+    return {
+        rank: query.rank,
+        firstname: query.firstname,
+        lastname: query.lastname,
+        score: score,
+        time: query.time,
+        gender: query.gender
+        
+    }
 }

@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint, totalPoint} from '../../query/user/guarduserQuery';
+import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint, totalPoint, raceResult} from '../../query/user/guarduserQuery';
 import * as interface_ from "../../interface";
 
 
@@ -11,7 +11,7 @@ export const appUserguardPlugin = new Elysia()
 .get("/curentuser", async ({profile}) => {
     if (profile.role == "user") {
         const user: any = await getUserByEmail(profile.email)
-        const total_Point: any =  await totalPoint(user.queryUser.id)
+        const total_Point: any =  await totalPoint(user.id)
         const resultWithScore: any = {
             totalPoint: total_Point,
             user
@@ -20,6 +20,21 @@ export const appUserguardPlugin = new Elysia()
         return resultWithScore
     }
 })
+
+.get("/race/result", async ({profile, set}) => {
+    if (profile.role == "user") {
+        try {
+            const result = await raceResult(profile.email)
+            return result
+        } catch (error) {
+            set.status = 500
+            return {
+                message: "fail"     
+            }
+        }
+    }
+})
+
 
 .post("/edit/user/", async ({body, set, profile})=> {
     try {
@@ -82,14 +97,14 @@ export const appUserguardPlugin = new Elysia()
         })
     })
 
-.post("/claim/:resultId/:runxId", async ({params, set, profile}) =>{
+.post("/claim", async ({query, set, profile}) =>{
     try {
-        const claim: any = await claimPoint(params, profile)
+        const claim: any = await claimPoint(query, profile)
         if (claim) {
             if (claim.status) {
                 return {
-                    runx_id: params.runxId,
-                    Races_id: params.resultId,
+                    runx_id: query.runxId,
+                    Races_id: query.resultId,
                     message: "claim successful"
                 }
             }
@@ -104,4 +119,9 @@ export const appUserguardPlugin = new Elysia()
         return {
             message: "claim fail"     
         }}
+},{
+    query: t.Object({
+        resultId: t.String(),
+        runxId: t.String()
+    })
 })

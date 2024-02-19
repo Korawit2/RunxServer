@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { calculateScore } from '../../function/calculate'
 const db = new PrismaClient()
 import * as interface_ from "../../interface";
 
@@ -18,6 +19,28 @@ export const getUserByEmail = async (profile :string) =>{
                 id_passport: true,
                 nationality: true,
                 user_img: true,
+            }
+        })
+        return queryUser
+        
+        
+    } catch (error) {
+        console.log('error',error)
+        return []
+    } 
+}
+
+export const raceResult = async (profile: string) =>{
+    try {
+        const queryUser = await db.userRunX.findUnique({
+            where: {
+                email: profile
+            },
+            select:{
+                firstname_eng: true,
+                lastname_eng: true,
+                nationality: true,
+                
             }
         })
         if (queryUser?.nationality) {
@@ -61,44 +84,31 @@ export const getUserByEmail = async (profile :string) =>{
                             distance: true
                         }
                     })
-                    if ( reacesResult[i].rank  <= 500) {
-                        var score: number = 1000/Math.log2(reacesResult[i].rank  + 1)
-                        const resultWithScore = await detailasync(reacesResult[i], event, score, AllRaceresultId._count.Races_id)
-                        result.push(resultWithScore)
-                    }
-                    if ( 500 < reacesResult[i].rank   && reacesResult[i].rank  <= 1000 ) {
-                        const resultWithScore = await detailasync(reacesResult[i], event, 100, AllRaceresultId._count.Races_id)
-                        result.push(resultWithScore)
-                        
-                    }
-                    if (reacesResult[i].rank  > 1000) {
-                        const resultWithScore = await detailasync(reacesResult[i], event, 50, AllRaceresultId._count.Races_id)
-                        result.push(resultWithScore)
-                        result.push(resultWithScore)
-                        
-                    }
+                    const score: any = await calculateScore(reacesResult[i].rank)
+                    const resultWithScore = await detailasync(reacesResult[i], event, score, AllRaceresultId._count.Races_id)
+                    result.push(resultWithScore)
                 }
                 return {
-                    queryUser,
+                    
                     reacesResult: result,
                 }
             } else {
                 return {
-                    queryUser,
                     reacesResult: "You have no races result",
                 }
             }
         }
         return {
-            queryUser,
             reacesResult: "user must edit nationality",
         }
-        
     } catch (error) {
         console.log('error',error)
-        return []
+        return {
+            message : "Error"
+        }
     } 
 }
+
 
 export const getAllUser = () =>{
     try {
@@ -149,7 +159,7 @@ export const updateUser = async (userBody: any,  userEmail: { email: string}) =>
 }
 
 
-export const claimPoint = async (params: {resultId: any, runxId: any}, profile: {email: string}) =>{
+export const claimPoint = async (query: {resultId: any, runxId: any}, profile: {email: string}) =>{
     try {   
         const checkEmailAndId : any = await db.userRunX.aggregate({
             _count: {
@@ -157,16 +167,16 @@ export const claimPoint = async (params: {resultId: any, runxId: any}, profile: 
             },
             where: {
                 email: profile.email,
-                id: parseInt(params.runxId) 
+                id: parseInt(query.runxId) 
             }
         })
         if (checkEmailAndId._count.email > 0) {
             const claimed = await db.race_result.update({
                 where: {
-                    id: parseInt(params.resultId)
+                    id: parseInt(query.resultId)
                 },
                 data: {
-                    runx_id: parseInt(params.runxId),
+                    runx_id: parseInt(query.runxId),
                     time_stamp: new Date(),
                     claim_status : true
                 },
@@ -202,20 +212,8 @@ export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
         if (Object.keys(reacesResult).length != 0) {
             
             for (let i = 0; i < reacesResult.length; i++) {
-                if ( reacesResult[i].rank  <= 500) {
-                    var score: number = 1000/Math.log2(reacesResult[i].rank   + 1)
-                    totalPoint = totalPoint + score
-                    
-                }
-                if (500 <reacesResult[i].rank   && reacesResult[i].rank   <= 1000) {
-                    totalPoint = totalPoint + 100
-                    
-                }
-                if (reacesResult[i].rank   > 1000) {
-                    totalPoint = totalPoint + 50
-                    
-                }
-
+                const score = await calculateScore(reacesResult[i].rank)
+                totalPoint = totalPoint + score
             }
             const final_total_point  = totalPoint.toFixed(0)
             return final_total_point

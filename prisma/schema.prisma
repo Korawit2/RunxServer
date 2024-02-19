@@ -39,6 +39,7 @@ model Events {
   cover_img String?
   logo_img  String?
   country   String
+  distance  String?
   Races     Races[]
   //Category  Category[]
 }
