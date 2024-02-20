@@ -34,6 +34,7 @@ export const eventYear = async (query:any) =>{
                 id: parseInt(query.raceId)
             }
         })
+
         return {
             race :events
         }
