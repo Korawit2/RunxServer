@@ -29,12 +29,14 @@ export const createEvent = async (events: any) =>{
 
 export const eventYear = async (query:any) =>{
     try{
-        const events = await db.races.findUnique({
+        const events: any = await db.races.findUnique({
             where: {
                 id: parseInt(query.raceId)
             }
         })
-        return events
+        return {
+            race :events
+        }
     }  catch (error) {
         console.log('error',error)
         return { status: 'error', error}
