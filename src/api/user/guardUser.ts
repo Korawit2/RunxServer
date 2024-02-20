@@ -8,7 +8,7 @@ import * as interface_ from "../../interface";
 const db = new PrismaClient()
 export const appUserguardPlugin = new Elysia()
 
-.get("/curentuser", async ({profile}) => {
+.get("/currentuser", async ({profile}) => {
     if (profile.role == "user") {
         const user: any = await getUserByEmail(profile.email)
         const total_Point: any =  await totalPoint(user.id)
