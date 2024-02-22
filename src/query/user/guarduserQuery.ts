@@ -237,50 +237,60 @@ export const getrace = async (email: string) =>{
                 nationality: true
             }}
         )
-        const result: any = await db.race_result.findFirst({
-            where:{
-                firstname: user?.firstname_eng,
-                lastname: user?.lastname_eng,
-                nationality: user?.nationality
-            },
-            select:{
-                Races_id: true,
-                time: true,
-                rank: true
-            }
-        })
-        const latestrace: any = await db.races.findMany({
-            where:{
-                Race_result:{
-                    some:{
-                        firstname: user?.firstname_eng,
-                        lastname: user?.lastname_eng,
-                        nationality: user?.nationality
-                    }
+        if (user.nationality != null) {
+            const result: any = await db.race_result.findFirst({
+                where:{
+                    firstname: user?.firstname_eng,
+                    lastname: user?.lastname_eng,
+                    nationality: user?.nationality
+                },
+                select:{
+                    Races_id: true,
+                    time: true,
+                    rank: true
                 }
-            },
-            orderBy: {
-                date: 'desc',
-            },
-            select:{
-                date:true,
-                name: true,
-                distance:true,
-            },
-            take: 1
-        })
-        const AllRaceresultId : any = await db.race_result.aggregate({
-            _count: {
-                Races_id: true,
-            },
-            where: {
-                Races_id: result.Races_id
+            })
+            if (result.length != 0) {
+                const latestrace: any = await db.races.findMany({
+                    where:{
+                        Race_result:{
+                            some:{
+                                firstname: user?.firstname_eng,
+                                lastname: user?.lastname_eng,
+                                nationality: user?.nationality
+                            }
+                        }
+                    },
+                    orderBy: {
+                        date: 'desc',
+                    },
+                    select:{
+                        date:true,
+                        name: true,
+                        distance:true,
+                    },
+                    take: 1
+                })
+                const AllRaceresultId : any = await db.race_result.aggregate({
+                    _count: {
+                        Races_id: true,
+                    },
+                    where: {
+                        Races_id: result.Races_id
+                    }
+                })
+                const score = await calculateScore(result.rank)
+                const date = await getdate(latestrace[0].date)
+                const resulted = await LatestRaceResults(latestrace, result,  AllRaceresultId._count.Races_id, score, date)
+                return resulted
             }
-        })
-        const score = await calculateScore(result.rank)
-        const date = await getdate(latestrace[0].date)
-        const resulted = await LatestRaceResults(latestrace, result,  AllRaceresultId._count.Races_id, score, date)
-        return resulted
+            return {
+                message: "You have no race result"
+            }
+        }
+        return {
+            message: "You have to edit Nationality"
+        }
     } catch (error) {
         console.log('error',error)
         return { status: "fail"}
@@ -323,6 +333,10 @@ const getdate = async (date: any) =>{
     let day = d.getDate();
     return `${day} ${month} ${year}`
 }
+
+
+
+
 
 
 

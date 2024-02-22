@@ -45,6 +45,6 @@ const app = new Elysia()
     `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
   );
 
-  //console.log(Object.keys(reacesResult).length)
+  //       Object.keys(reacesResult).length
 
 
