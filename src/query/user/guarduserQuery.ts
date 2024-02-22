@@ -250,7 +250,7 @@ export const getrace = async (email: string) =>{
                     rank: true
                 }
             })
-            if (result.length != 0) {
+            if (result) {
                 const latestrace: any = await db.races.findMany({
                     where:{
                         Race_result:{
