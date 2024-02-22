@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint, totalPoint, raceResult} from '../../query/user/guarduserQuery';
+import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint, totalPoint, raceResult, getrace} from '../../query/user/guarduserQuery';
 import * as interface_ from "../../interface";
 
 
@@ -124,4 +124,18 @@ export const appUserguardPlugin = new Elysia()
         resultId: t.String(),
         runxId: t.String()
     })
+})
+
+.get("/LatestRace", async ({profile, set}) => {
+    if (profile.role == "user") {
+        try {
+            const getLatestRace = await getrace(profile.email)
+            return getLatestRace
+        } catch (error) {
+            set.status = 500
+            return {
+                message: "fail"     
+            }
+        }
+    }
 })

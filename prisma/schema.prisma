@@ -52,7 +52,7 @@ model Races {
   event_id    Int
   name        String        @unique
   state       String?
-  date        String
+  date        DateTime?
   cover_img   String?
   logo_img    String?
   start_time  String

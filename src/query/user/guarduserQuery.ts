@@ -225,9 +225,82 @@ export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
     } 
 }
 
+export const getrace = async (email: string) =>{
+    try {
+        const user: any = await db.userRunX.findUnique({
+            where: {
+                email: email
+            },
+            select:{
+                firstname_eng: true,
+                lastname_eng: true,
+                nationality: true
+            }}
+        )
+        const result: any = await db.race_result.findFirst({
+            where:{
+                firstname: user?.firstname_eng,
+                lastname: user?.lastname_eng,
+                nationality: user?.nationality
+            },
+            select:{
+                Races_id: true,
+                time: true,
+                rank: true
+            }
+        })
+        const latestrace: any = await db.races.findMany({
+            where:{
+                Race_result:{
+                    some:{
+                        firstname: user?.firstname_eng,
+                        lastname: user?.lastname_eng,
+                        nationality: user?.nationality
+                    }
+                }
+            },
+            orderBy: {
+                date: 'desc',
+            },
+            select:{
+                date:true,
+                name: true,
+                distance:true,
+            },
+            take: 1
+        })
+        const AllRaceresultId : any = await db.race_result.aggregate({
+            _count: {
+                Races_id: true,
+            },
+            where: {
+                Races_id: result.Races_id
+            }
+        })
+        const score = await calculateScore(result.rank)
+        const date = await getdate(latestrace[0].date)
+        const resulted = await LatestRaceResults(latestrace, result,  AllRaceresultId._count.Races_id, score, date)
+        return resulted
+    } catch (error) {
+        console.log('error',error)
+        return { status: "fail"}
+    } 
+}
+
+
+const LatestRaceResults = async (latestrace: any, result: any, allrace: number,  score:any , date: any) =>{
+    return{
+        date: date,
+        name: latestrace[0].name,
+        distance: `${latestrace[0].distance}KM`,
+        point: score,
+        time: result.time,
+        rank: `${result.rank}/${allrace}`
+    }
+}
+
 
 const detailasync =  async (race: any, event: any, score: number, allrace: number) =>{
-    console.log()
     return {
         ResultId: race.id,
         Races_id: race.Races_id,
@@ -242,7 +315,14 @@ const detailasync =  async (race: any, event: any, score: number, allrace: numbe
     }
 }
 
-
+const getdate = async (date: any) =>{
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const d = new Date(date);
+    let year = d.getFullYear();
+    let month = months[d.getMonth()];
+    let day = d.getDate();
+    return `${day} ${month} ${year}`
+}
 
 
 
