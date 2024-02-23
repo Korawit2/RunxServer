@@ -21,17 +21,18 @@ export const appUpload = new Elysia()
 
     if (columnValidate) {
         const response = await uploadDataToRaces(db, raceId, sheetJSON_)
-
-        return {
-            success:true,
-            data:response,
-            success_msg: "Data has been added in races result."
+        if (response.status) {
+            return {
+                success:true,
+                data:response,
+                success_msg: "Data has been added in races result."
+            }
         }
         } else {
             set.status = 400;
             return {
                 error: true,
-                error_msg: "Some fields is missing."
+                error_msg: "Some fields is missing. or Type error"
             }
         }
     } else {

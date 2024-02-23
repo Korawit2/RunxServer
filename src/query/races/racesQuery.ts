@@ -33,31 +33,43 @@ export const createRace = async (race: any, query: any) =>{
 }
 
 export async function uploadDataToRaces(db: PrismaClient, raceId: string, dataRace_result: interface_.ExcelUploadRuner[]) {
-    const dataConvert =  dataRace_result.map((item,i) => {
-        var name = item.Name.split(" ")
-        const firstname: string = name[0]
-        const lastname: string = name[1]
-        return {
-            Races_id: parseID(raceId),
-            rank: item.Rank,
-            time: item.Gun_Time,
-            firstname: firstname,
-            lastname: lastname,
-            gender: item.Gender,
-            age_group: item.Age_Group,
-            nationality: item.Nationality
+    try{
+        const dataConvert =  dataRace_result.map((item,i) => {
+            var name = item.Name.split(" ")
+            const firstname: string = name[0]
+            const lastname: string = name[1]
+            return {
+                Races_id: parseID(raceId),
+                rank: item.Rank,
+                time: item.Gun_Time,
+                firstname: firstname,
+                lastname: lastname,
+                gender: item.Gender,
+                age_group: item.Age_Group,
+                nationality: item.Nationality
+            }
+        })
+    
+        const updateData = await db.race_result.createMany({
+            data: dataConvert
+        })
+        if (updateData.count !== 0) {
+            return {
+                status: true
+            };
         }
-    })
-
-    const updateData = await db.race_result.createMany({
-        data: dataConvert
-    })
-
-    return updateData;
-
-    function parseID(id: string) {
-        return Number.parseInt(id, 10);
+        return {
+            status: false
+        };;
+    
+        function parseID(id: string) {
+            return Number.parseInt(id, 10);
+        }
+    } catch (error) {
+        console.log('error',error)
+        return { status: 'error', error}
     }
+    
 
 }
 
