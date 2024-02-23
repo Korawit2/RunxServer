@@ -43,65 +43,45 @@ export const raceResult = async (email: string, query: any) =>{
             }}
         )
         if (user.nationality != null) {
-            const resulted: any = await db.race_result.findMany({
-                where:{
-                    firstname: user?.firstname_eng,
-                    lastname: user?.lastname_eng,
-                    nationality: user?.nationality
-                },
-                select:{
-                    Races_id: true,
-                    time: true,
-                    rank: true
-                },
-            })
-            if (Object.keys(resulted).length != 0) {
+                const race: any = await db.races.findMany({
+                    include:{
+                        Race_result: {
+                            where:{
+                                firstname: user?.firstname_eng,
+                                lastname: user?.lastname_eng,
+                                nationality: user?.nationality
+                            }
+                        }
+                    },
+                    where:{
+                        Race_result:{
+                            some:{
+                                firstname: user?.firstname_eng,
+                                lastname: user?.lastname_eng,
+                                nationality: user?.nationality
+                            }
+                        }
+                    },
+                    orderBy: {
+                        date: query.sortBy,
+                    },
+                    take: parseInt(query.limit)
+                })
                 var result: any = []
-                for (let i = 0; i < resulted.length && i < parseInt(query.limit); i++) {
+                for (let i = 0; i < race.length; i++) {
                     const AllRaceresultId : any = await db.race_result.aggregate({
                         _count: {
                             Races_id: true,
                         },
                         where: {
-                            Races_id: resulted[i].Races_id
+                            Races_id: race[i].Race_result[0].Races_id
                         }
                     })
-                    
-                    const event: any = await db.races.findMany({
-                        where: {
-                            Race_result: {
-                                some:{
-                                    Races_id: resulted[i].Races_id
-                                }
-                            }
-                        },
-                        select:{
-                            date: true,
-                            name: true,
-                            distance: true
-                        },
-                        orderBy: {
-                            date: 'desc',
-                        },
-                        take: parseInt(query.limit)
-                        
-                    })
-                    const score: any = await calculateScore(resulted[i].rank)
-                    const resultWithScore = await detailasync(resulted[i], event, score, AllRaceresultId._count.Races_id)
-                    result.push(resultWithScore)
+                    const score: any = await calculateScore(race[i].Race_result[0].rank)
+                    const resultWithScore = await detailasync(race[i], score, AllRaceresultId._count.Races_id)
+                    result.push(resultWithScore)   
                 }
-                return {
-                    
-                    reacesResult: result,
-                }
-            } else {
-                return {
-                    reacesResult: "You have no races result",
-                }
-            }
-        }
-        return {
-            reacesResult: "user must edit nationality",
+                return result
         }
     } catch (error) {
         console.log('error',error)
@@ -239,18 +219,17 @@ const LatestRaceResults = async (latestrace: any, result: any, allrace: number, 
 }
 
 
-const detailasync =  async (race: any, event: any, score: number, allrace: number) =>{
+const detailasync =  async (race: any, score: number, allrace: number) =>{
     return {
-        ResultId: race.id,
-        Races_id: race.Races_id,
-        date: event[0].date,
-        name: event[0].name,
-        distance: `${event[0].distance}KM`,
-        rank: `${race.rank}/${allrace}`,
-        time: race.time,
-        claim_status: race.claim_status,
+        ResultId: race.Race_result[0].id,
+        Races_id: race.id,
+        date: race.date,
+        name: race.name,
+        distance: `${race.distance}KM`,
+        rank: `${race.Race_result[0].rank}/${allrace}`,
+        time: race.Race_result[0].time,
+        claim_status: race.Race_result[0].claim_status,
         score : score.toFixed(0)
-        
     }
 }
 
