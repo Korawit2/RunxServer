@@ -19,10 +19,10 @@ const app = new Elysia()
     credentials: true,
   }))
   .derive(async ({jwt,  headers}) => {
-    const auth = headers.aut ///////authorization
+    const auth = headers.authorization ///////authorization
     if(auth) {
-      //const convert = auth.startsWith('Bearer ') ? auth.slice(7) : null
-      const profile = await jwt.verify(auth!) //jwt.verify(convert!)
+      const convert = auth.startsWith('Bearer ') ? auth.slice(7) : null
+      const profile = await jwt.verify(convert!) //jwt.verify(convert!)
       //console.log(profile)
       return { profile }
     } else {

@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint, totalPoint, raceResult, getrace} from '../../query/user/guarduserQuery';
+import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint, totalPoint, raceResult} from '../../query/user/guarduserQuery';
 import * as interface_ from "../../interface";
 
 
@@ -21,10 +21,10 @@ export const appUserguardPlugin = new Elysia()
     }
 })
 
-.get("/race/result", async ({profile, set}) => {
+.get("/race/result", async ({profile, query ,set}) => {
     if (profile.role == "user") {
         try {
-            const result = await raceResult(profile.email)
+            const result = await raceResult(profile.email, query)
             return result
         } catch (error) {
             set.status = 500
@@ -33,6 +33,11 @@ export const appUserguardPlugin = new Elysia()
             }
         }
     }
+},{
+    query: t.Object({
+        limit: t.String(),
+        sortBy: t.String()
+    })
 })
 
 
@@ -126,16 +131,4 @@ export const appUserguardPlugin = new Elysia()
     })
 })
 
-.get("/LatestRace", async ({profile, set}) => {
-    if (profile.role == "user") {
-        try {
-            const getLatestRace = await getrace(profile.email)
-            return getLatestRace
-        } catch (error) {
-            set.status = 500
-            return {
-                message: "fail"     
-            }
-        }
-    }
-})
+
