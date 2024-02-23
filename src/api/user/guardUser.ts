@@ -22,17 +22,23 @@ export const appUserguardPlugin = new Elysia()
 })
 
 .get("/race/result", async ({profile, query ,set}) => {
-    if (profile.role == "user") {
-        try {
-            const result = await raceResult(profile.email, query)
-            return result
-        } catch (error) {
-            set.status = 500
-            return {
-                message: "fail"     
+    try {
+        if (profile.role == "user") {
+            try {
+                const result = await raceResult(profile.email, query)
+                return result
+            } catch (error) {
+                set.status = 500
+                return {
+                    message: "fail"     
+                }
             }
         }
-    }
+    } catch (error) {
+        console.log('error',error)
+        return []
+    } 
+    
 },{
     query: t.Object({
         limit: t.String(),
