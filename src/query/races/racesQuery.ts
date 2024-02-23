@@ -85,12 +85,14 @@ export const queryRunner = async (query: any) =>{
                 { lastname: { contains: query.name } },
             ]
         }
+        if(query.raceId) {
+            filterQuery["Races_id"] = parseInt(query.raceId) 
+        }
         if(query.gender) {
             filterQuery["gender"] = query.gender
         }
         const queryRunner: any = await db.race_result.findMany({
             where: {
-                Races_id: parseInt(query.raceId),
                 ...filterQuery
             },
             select:{
