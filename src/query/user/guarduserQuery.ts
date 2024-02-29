@@ -42,7 +42,6 @@ export const raceResult = async (email: string, query: any) =>{
                 nationality: true
             }}
         )
-        console.log(user)
         if (user.nationality != null) {
                 const race: any = await db.races.findMany({
                     include:{
