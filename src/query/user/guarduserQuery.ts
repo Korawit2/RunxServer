@@ -42,6 +42,7 @@ export const raceResult = async (email: string, query: any) =>{
                 nationality: true
             }}
         )
+        console.log(user)
         if (user.nationality != null) {
                 const race: any = await db.races.findMany({
                     include:{
@@ -67,21 +68,29 @@ export const raceResult = async (email: string, query: any) =>{
                     },
                     take: parseInt(query.limit)
                 })
-                var result: any = []
-                for (let i = 0; i < race.length; i++) {
-                    const AllRaceresultId : any = await db.race_result.aggregate({
-                        _count: {
-                            Races_id: true,
-                        },
-                        where: {
-                            Races_id: race[i].Race_result[0].Races_id
-                        }
-                    })
-                    const score: any = await calculateScore(race[i].Race_result[0].rank)
-                    const resultWithScore = await detailasync(race[i], score, AllRaceresultId._count.Races_id)
-                    result.push(resultWithScore)   
+                if (race.length) {
+                    var result: any = []
+                    for (let i = 0; i < race.length; i++) {
+                        const AllRaceresultId : any = await db.race_result.aggregate({
+                            _count: {
+                                Races_id: true,
+                            },
+                            where: {
+                                Races_id: race[i].Race_result[0].Races_id
+                            }
+                        })
+                        const score: any = await calculateScore(race[i].Race_result[0].rank)
+                        const resultWithScore = await detailasync(race[i], score, AllRaceresultId._count.Races_id)
+                        result.push(resultWithScore)   
+                    }
+                    return result
                 }
-                return result
+                return {
+                    message: "Race result is empty"
+                }
+        }
+        return {
+            message: "User must Edit nationality"
         }
     } catch (error) {
         console.log('error',error)

@@ -11,21 +11,26 @@ export const createRace = async (race: any, query: any) =>{
                 name: title
             }
         })
-        if (query) {
-            return false
+        if (queryname) {
+            return {
+                status: false
+            }
         }
-        const users = await db.races.create({
+        const races = await db.races.create({
             data: {
                 org_id: parseInt(query.org) ,
                 event_id: parseInt(query.event) ,
                 name: race.name,
-                date: race.date,
+                date: new Date(race.date) ,
                 state: race.state,
                 start_time: race.start_time,
                 distance: race.distance
             }
         })
-        return true
+        return {
+                status: true,
+                races
+            }
     } catch (error) {
         console.log('error',error)
         return { status: 'error', error}

@@ -20,6 +20,7 @@ export const createEvent = async (events: any) =>{
             
             }
         })
+        console.log(users)
         return true
     } catch (error) {
         console.log('error',error)

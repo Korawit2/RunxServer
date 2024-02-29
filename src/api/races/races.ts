@@ -11,7 +11,7 @@ export const appRacesPlugin = new Elysia()
         try {
         const race = body
         const res = await createRace(race, query)
-        if (res) {
+        if (res.status) {
             return { 
             message: "insert race complete",
             data: body
@@ -37,7 +37,6 @@ export const appRacesPlugin = new Elysia()
             distance: t.Number()
         }),
         query: t.Object({
-            race: t.String(),
             org: t.String(),
             event: t.String()
 
