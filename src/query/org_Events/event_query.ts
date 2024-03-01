@@ -28,11 +28,11 @@ export const createEvent = async (events: any) =>{
     } 
 }
 
-export const eventYear = async (query:any) =>{
+export const eventYear = async (id:any) =>{
     try{
         const events: any = await db.races.findUnique({
             where: {
-                id: parseInt(query.raceId)
+                id: parseInt(id.id)
             }
         })
 

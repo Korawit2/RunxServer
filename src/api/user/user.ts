@@ -8,7 +8,7 @@ const db = new PrismaClient()
 
 
 export const appPlugin = new Elysia()
-.post("/signup", async ({body, set}) => {
+.post("/users/signup", async ({body, set}) => {
     const userBody: any = body
     const isEmailExit = await checkemail(userBody.email)
     if (!isEmailExit.isuser) {
@@ -58,7 +58,7 @@ export const appPlugin = new Elysia()
     })
 )
 
-.post("/login", async ({body, set, jwt}) => {
+.post("/users/login", async ({body, set, jwt}) => {
     try {
         const userData: any = body
         const res: any = await checkUser({userData})
@@ -91,7 +91,7 @@ export const appPlugin = new Elysia()
     })
 })
 
-.post("/admin", async ({body, set, jwt}) => {
+.post("/admins/login", async ({body, set, jwt}) => {
         try {
             const userData: any = body
             const res: any = await checkAdmin({userData})

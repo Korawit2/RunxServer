@@ -8,7 +8,7 @@ import * as interface_ from "../../interface";
 const db = new PrismaClient()
 export const appUserguardPlugin = new Elysia()
 
-.get("/currentuser", async ({profile}) => {
+.get("/currentusers", async ({profile}) => {
     if (profile.role == "user") {
         const user: any = await getUserByEmail(profile.email)
         const total_Point: any =  await totalPoint(user.id)
@@ -21,7 +21,7 @@ export const appUserguardPlugin = new Elysia()
     }
 })
 
-.get("/race/result", async ({profile, query ,set}) => {
+.get("/races/result", async ({profile, query ,set}) => {
     try {
         if (profile.role == "user") {
             try {
@@ -47,7 +47,7 @@ export const appUserguardPlugin = new Elysia()
 })
 
 
-.post("/edit/user/", async ({body, set, profile})=> {
+.post("currentusers", async ({body, set, profile})=> {
     try {
         const userBody = body;
         const Editdata: interface_.ObjectSort = {};
@@ -108,7 +108,7 @@ export const appUserguardPlugin = new Elysia()
         })
     })
 
-.post("/claim", async ({query, set, profile}) =>{
+.post("/currentusers/claim/score", async ({query, set, profile}) =>{
     try {
         const claim: any = await claimPoint(query, profile)
         if (claim) {

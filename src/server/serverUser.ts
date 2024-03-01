@@ -19,7 +19,6 @@ export const appUser = new Elysia()
     }, (app) =>
                 app
                 .use(appUserguardPlugin)
-                .use(getraces)
                 .use(appgetOrgPlugin)
                 
     )

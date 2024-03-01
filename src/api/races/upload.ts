@@ -9,7 +9,7 @@ const db = new PrismaClient()
 
 export const appUpload = new Elysia()
 
-.post('/upload', async ({ body: { excelFile, raceId, }, set  }) => {
+.post('/races/result/runners/upload', async ({ body: { excelFile, raceId, }, set  }) => {
     const columnsField = ['Name','Gender','Age_Group','Gun_Time','Rank','Nationality'];
     var workbook = XLSX.read(await excelFile.arrayBuffer(), { type: "array" });
     const sheetName = workbook.SheetNames[0];

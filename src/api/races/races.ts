@@ -7,7 +7,7 @@ const db = new PrismaClient()
 
 
 export const appRacesPlugin = new Elysia()
-    .post("/race", async ({body ,query, set, params})=>{
+    .post("/races", async ({body ,query, set, params})=>{
         try {
         const race = body
         const res = await createRace(race, query)
@@ -44,16 +44,16 @@ export const appRacesPlugin = new Elysia()
     })
 
 export const getraces = new Elysia()
-    .get("/race", async ({query}) => {
-        const raceYear = await eventYear(query)
+    .get("/races/:id", async ({params}) => {
+        const raceYear = await eventYear(params)
         return raceYear
     },{
-        query: t.Object({
-            raceId: t. String()
+        params: t.Object({
+            id: t. String()
         })
     })
     
-    .get("/runner", async ({query, set}) =>{
+    .get("/races/result/runner", async ({query, set}) =>{
         try {
             const runner = await queryRunner(query)
             return runner
