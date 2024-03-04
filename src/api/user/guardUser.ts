@@ -41,7 +41,7 @@ export const appUserguardPlugin = new Elysia()
     
 },{
     query: t.Object({
-        limit: t.String(),
+        limit: t.Optional(t.String()),
         sortBy: t.String()
     })
 })

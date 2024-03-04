@@ -65,7 +65,9 @@ export const raceResult = async (email: string, query: any) =>{
                     orderBy: {
                         date: query.sortBy,
                     },
-                    take: parseInt(query.limit)
+                    ...(query.limit != null && {
+                        take: parseInt(query.limit)
+                    })
                 })
                 if (race.length) {
                     var result: any = []

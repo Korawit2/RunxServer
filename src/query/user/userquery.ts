@@ -36,10 +36,14 @@ export const checkemail = async (email: string) =>{
         const query = await db.userRunX.findUnique({
             where: {
                 email: email
+            },
+            select:{
+                firstname_eng:true
             }
         })
         if (query != null) {
             return {
+                query,
                 isuser: true
             }
         }

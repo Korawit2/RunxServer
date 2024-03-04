@@ -98,7 +98,7 @@ export const appPlugin = new Elysia()
             if (!res.loggedIn) {
                 set.status = 500
                 return {
-                status: false,
+                    status: false,
                 }
             }
             const token = await jwt.sign({
@@ -123,3 +123,22 @@ export const appPlugin = new Elysia()
             password: t.String(),
         })
     })
+
+.post("/users/resetpassword", async ({body, set}) =>{
+    try {
+        const isEmailExit = await checkemail(body.email)
+        if (isEmailExit.isuser) {
+            
+        }
+    } catch (error) {
+        set.status = 500
+        return {
+            message: 'error',
+            error        
+    }
+    }
+},{
+    body: t.Object({
+        email: t.String()
+    })
+})
