@@ -11,6 +11,7 @@
     "@google-cloud/storage": "^7.7.0",
     "@prisma/client": "5.8.1",
     "elysia": "latest",
+    "postmark": "^4.0.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
