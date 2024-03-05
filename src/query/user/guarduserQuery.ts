@@ -163,20 +163,40 @@ export const claimPoint = async (query: {resultId: any, runxId: any}, profile: {
             }
         })
         if (checkEmailAndId._count.email > 0) {
-            const claimed = await db.race_result.update({
-                where: {
+            const checkresult = await db.race_result.findUnique({
+                where:{
                     id: parseInt(query.resultId)
+                }
+            }) 
+            const user = await db.userRunX.findUnique({
+                where:{
+                    id: parseInt(query.runxId)
                 },
-                data: {
-                    runx_id: parseInt(query.runxId),
-                    time_stamp: new Date(),
-                    claim_status : true
-                },
-            })
-            
+                select:{
+                    firstname_eng:true,
+                    lastname_eng:true,
+                    nationality:true
+                }
+            }) 
+            if (checkresult?.firstname === user?.firstname_eng && checkresult?.lastname === user?.lastname_eng
+                && checkresult?.nationality === user?.nationality) {
+                const claimed = await db.race_result.update({
+                    where: {
+                        id: parseInt(query.resultId)
+                    },
+                    data: {
+                        runx_id: parseInt(query.runxId),
+                        time_stamp: new Date(),
+                        claim_status : true
+                    }
+                })
+                return {
+                    status: true,
+                    claimed
+                }
+            }
             return {
-                status: true,
-                claimed
+                status: false
             }
         }
         return {

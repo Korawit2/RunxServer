@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { jwt } from '@elysiajs/jwt'
-import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin } from '../../query/user/userquery';
+import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin,changepassword } from '../../query/user/userquery';
 import  postmark  from "postmark"
 
 
@@ -125,7 +125,7 @@ export const appPlugin = new Elysia()
         })
     })
 
-.post("/users/resetpassword", async ({body, set}) =>{
+.post("/users/resetpassword/sendemail", async ({body, set}) =>{
     try {
         const isEmailExit = await checkemail(body.email)
         if (isEmailExit.isuser) {
@@ -165,3 +165,23 @@ export const appPlugin = new Elysia()
         email: t.String()
     })
 })
+
+.post("/users/changepassword", async ({body, set}) =>{
+    try {
+        const useremail = await changepassword(body)
+        return useremail
+    } catch (error) {
+        set.status = 500
+        return {
+            message: 'error',
+            error        
+        }
+    }
+},{
+    body: t.Object({
+        email: t.String(),
+        password: t.String(),
+        confirmpassword: t.String()
+    })
+})
+
