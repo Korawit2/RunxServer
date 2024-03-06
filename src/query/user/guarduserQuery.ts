@@ -253,6 +253,7 @@ const detailasync =  async (race: any, score: number, allrace: number) =>{
     return {
         ResultId: race.Race_result[0].id,
         Races_id: race.id,
+        logoImg: race.logo_img,
         date: race.date,
         name: race.name,
         distance: `${race.distance}KM`,
