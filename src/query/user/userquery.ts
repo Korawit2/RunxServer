@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import  postmark  from "postmark"
+import { calculateScore } from '../../function/calculate'
 const db = new PrismaClient()
 
 
@@ -162,4 +163,53 @@ export const changepassword = async (user: any) =>{
         console.log('error',error)
         return { status: 'error', error}
     } 
+}
+
+export const getrankrunx = async () =>{
+    try {
+        const user = await db.userRunX.findMany({
+            select:{
+                id:true,
+                firstname_eng:true,
+                lastname_eng:true,
+                gender:true,
+            }
+        })
+        var rankuser = []
+        for (let i = 0; i < user.length; i++) {
+            const userrace = await db.race_result.findMany({
+                where:{
+                    runx_id: user[i].id
+                }
+            })
+            var totalscore: number = 0
+            if (userrace.length > 0) {
+                for (let i = 0; i < userrace.length; i++) {
+                    const score: any = await calculateScore(userrace[i].rank)
+                    totalscore = totalscore + score
+                }
+            }
+            const resultWithScore = await RaceResults(user[i], totalscore)
+            rankuser.push(resultWithScore)
+            
+            
+        }
+        rankuser.sort((a, b) => {
+            return a.totalscore - b.totalscore;
+        });
+        rankuser.reverse();
+        return rankuser
+    }  
+    catch (error) {
+        console.log('error',error)
+        return { status: 'error', error}
+    } 
+}
+
+const RaceResults = async (user: any, totalscore: number ) =>{
+    return{
+        name: user.firstname_eng +" "+ user.lastname_eng,
+        totalscore: totalscore,
+        gender: user.gender
+    }
 }

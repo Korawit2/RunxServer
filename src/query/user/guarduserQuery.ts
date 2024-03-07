@@ -237,16 +237,7 @@ export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
     } 
 }
 
-const LatestRaceResults = async (latestrace: any, result: any, allrace: number,  score:any , date: any) =>{
-    return{
-        date: date,
-        name: latestrace[0].name,
-        distance: `${latestrace[0].distance}KM`,
-        point: score,
-        time: result.time,
-        rank: `${result.rank}/${allrace}`
-    }
-}
+
 
 
 const detailasync =  async (race: any, score: number, allrace: number) =>{

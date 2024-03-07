@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { jwt } from '@elysiajs/jwt'
-import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin,changepassword } from '../../query/user/userquery';
+import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin,changepassword, getrankrunx} from '../../query/user/userquery';
 import  postmark  from "postmark"
 
 
@@ -183,5 +183,19 @@ export const appPlugin = new Elysia()
         password: t.String(),
         confirmpassword: t.String()
     })
+})
+
+.get("/users/runx/rank", async ({set}) =>{
+    try{
+        const rank = await getrankrunx()
+        return rank
+    }
+    catch (error) {
+        set.status = 500
+        return {
+            message: 'error',
+            error        
+        }
+    }
 })
 
