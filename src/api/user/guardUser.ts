@@ -1,6 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint, totalPoint, raceResult} from '../../query/user/guarduserQuery';
+import { changepassword } from '../../query/user/userquery';
 import * as interface_ from "../../interface";
 
 
@@ -134,6 +135,42 @@ export const appUserguardPlugin = new Elysia()
     query: t.Object({
         resultId: t.String(),
         runxId: t.String()
+    })
+})
+.post("/users/changepassword", async ({body, set, profile}) =>{
+    try {
+        const useremail = await changepassword(body,profile.email)
+        return useremail
+    } catch (error) {
+        set.status = 500
+        return {
+            message: 'error',
+            error        
+        }
+    }
+},{
+    body: t.Object({
+        password: t.String(),
+        confirmpassword: t.String()
+    })
+})
+export const resetpassword = new Elysia()
+
+.post("/users/resetpassword", async ({body, set, profile}) =>{
+    try {
+        const useremail = await changepassword(body,profile.email)
+        return useremail
+    } catch (error) {
+        set.status = 500
+        return {
+            message: 'error',
+            error        
+        }
+    }
+},{
+    body: t.Object({
+        password: t.String(),
+        confirmpassword: t.String()
     })
 })
 

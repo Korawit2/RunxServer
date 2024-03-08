@@ -8,7 +8,7 @@ const db = new PrismaClient()
 
 export const appPostOrgPlugin = new Elysia()
 
-    .post("/organizationals", async ({body, set})=> {
+    .post("/organization", async ({body, set})=> {
     const orgBody = body
     try {
         const res = await createOrg(orgBody)
@@ -37,4 +37,4 @@ export const appPostOrgPlugin = new Elysia()
     })
 
     export const appgetOrgPlugin = new Elysia()
-    .get("/organizationals", () => getAllOrg())
+    .get("/organization", () => getAllOrg())

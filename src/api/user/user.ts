@@ -125,29 +125,34 @@ export const appPlugin = new Elysia()
         })
     })
 
-.post("/users/resetpassword/sendemail", async ({body, set}) =>{
+.post("/users/resetpassword/sendemail", async ({body, set, jwt}) =>{
     try {
         const isEmailExit = await checkemail(body.email)
         if (isEmailExit.isuser) {
-            var client = new postmark.ServerClient(`${process.env.POSTMARK_TOKEN}`);
-            client.sendEmailWithTemplate({
-                "From": "6322771930@g.siit.tu.ac.th",
-                "To": "6322772953@g.siit.tu.ac.th", //body.email
-                "TemplateAlias": "password-reset",
-                "TemplateModel": {
-                "product_url": "product_url_Value",
-                "product_name": "Runx",
-                "name": isEmailExit.query?.firstname_eng,
-                "action_url": "https://www.youtube.com/watch?v=3iPQhw4e2mc",
-                "operating_system": "macOs window",
-                "browser_name": "chrome",
-                "support_url": "https://www.youtube.com/watch?v=KTRv50n2jxA",
-                "company_name": "Runx",
-                "company_address": "สวรรค์ชั้น 7"
-                }
-            });
+            // var client = new postmark.ServerClient(`${process.env.POSTMARK_TOKEN}`);
+            // client.sendEmailWithTemplate({
+            //     "From": "6322771930@g.siit.tu.ac.th",
+            //     "To": "6322772953@g.siit.tu.ac.th", //body.email
+            //     "TemplateAlias": "password-reset",
+            //     "TemplateModel": {
+            //     "product_url": "product_url_Value",
+            //     "product_name": "Runx",
+            //     "name": isEmailExit.query?.firstname_eng,
+            //     "action_url": "https://www.youtube.com/watch?v=3iPQhw4e2mc",
+            //     "operating_system": "macOs window",
+            //     "browser_name": "chrome",
+            //     "support_url": "https://www.youtube.com/watch?v=KTRv50n2jxA",
+            //     "company_name": "Runx",
+            //     "company_address": "สวรรค์ชั้น 7"
+            //     }
+            // });
+            const token = await jwt.sign({
+                email: body.email,
+                role: "resetpassword"
+            })
             return {
-                message: 'Link reset password is sented to your email'
+                message: 'Link reset password is sented to your email',
+                Token: token
             }
         }
         return {
@@ -166,24 +171,7 @@ export const appPlugin = new Elysia()
     })
 })
 
-.post("/users/changepassword", async ({body, set}) =>{
-    try {
-        const useremail = await changepassword(body)
-        return useremail
-    } catch (error) {
-        set.status = 500
-        return {
-            message: 'error',
-            error        
-        }
-    }
-},{
-    body: t.Object({
-        email: t.String(),
-        password: t.String(),
-        confirmpassword: t.String()
-    })
-})
+
 
 .get("/users/runx/rank", async ({set}) =>{
     try{

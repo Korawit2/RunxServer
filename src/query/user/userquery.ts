@@ -121,37 +121,39 @@ export const checkUser = async (user: any) =>{
     } 
 }
 
-export const changepassword = async (user: any) =>{
+export const changepassword = async (user: any, email:any) =>{
     try {
         if (user.password === user.confirmpassword) {
-            const isEmailExit = await checkemail(user.email)
-            user.password = await Bun.password.hash(user.password, {
-                algorithm: 'bcrypt',
-                cost: 10,
-            })
-            const updateUser: any = await db.userRunX.update({
-                where: {
-                    email: user.email
-                },
-                data: {
-                    password: user.password
-                },
-            }) 
-            var client = new postmark.ServerClient(`${process.env.POSTMARK_TOKEN}`);
-            client.sendEmailWithTemplate({
-                "From": "6322771930@g.siit.tu.ac.th",
-                "To": "6322772953@g.siit.tu.ac.th",
-                "TemplateAlias": "password-reset-1",
-                "TemplateModel": {
-                "product_name": "Runx",
-                "name": isEmailExit.query?.firstname_eng,
-                "action_url": "https://www.youtube.com/watch?v=btNmeVPdsT8",
-                "company_name": "Runx",
-                "company_address": "สวรรค์ชั้น 7",
+            const isEmailExit = await checkemail(email)
+            if (isEmailExit.isuser) {
+                user.password = await Bun.password.hash(user.password, {
+                    algorithm: 'bcrypt',
+                    cost: 10,
+                })
+                const updateUser: any = await db.userRunX.update({
+                    where: {
+                        email: email
+                    },
+                    data: {
+                        password: user.password
+                    },
+                }) 
+                // var client = new postmark.ServerClient(`${process.env.POSTMARK_TOKEN}`);
+                // client.sendEmailWithTemplate({
+                //     "From": "6322771930@g.siit.tu.ac.th",
+                //     "To": "6322772953@g.siit.tu.ac.th",
+                //     "TemplateAlias": "password-reset-1",
+                //     "TemplateModel": {
+                //     "product_name": "Runx",
+                //     "name": isEmailExit.query?.firstname_eng,
+                //     "action_url": "https://www.youtube.com/watch?v=btNmeVPdsT8",
+                //     "company_name": "Runx",
+                //     "company_address": "สวรรค์ชั้น 7",
+                //     }
+                // });
+                return {
+                    message: "change password complete"
                 }
-            });
-            return {
-                message: "change password complete"
             }
         }
         return {
