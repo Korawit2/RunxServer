@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { jwt } from '@elysiajs/jwt'
 import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin,changepassword, getrankrunx} from '../../query/user/userquery';
 import  postmark  from "postmark"
+import { number } from "elysia/dist/error";
 
 
 const db = new PrismaClient()
@@ -173,9 +174,9 @@ export const appPlugin = new Elysia()
 
 
 
-.get("/users/runx/rank", async ({set}) =>{
+.get("/users/runx/rank", async ({query,set}) =>{
     try{
-        const rank = await getrankrunx()
+        const rank = await getrankrunx(query)
         return rank
     }
     catch (error) {
@@ -185,5 +186,10 @@ export const appPlugin = new Elysia()
             error        
         }
     }
+},{
+    query: t.Object({
+        min: t.Optional(t.String()),
+        max: t.Optional(t.String()) 
+    })
 })
 

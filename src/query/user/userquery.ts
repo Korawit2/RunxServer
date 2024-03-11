@@ -167,8 +167,15 @@ export const changepassword = async (user: any, email:any) =>{
     } 
 }
 
-export const getrankrunx = async () =>{
+export const getrankrunx = async (query: any) =>{
     try {
+        var minY: any
+        var maxY: any
+        if (query !== null) {
+            const date = new Date();
+            minY = date.getFullYear() - parseInt(query.min) 
+            maxY = date.getFullYear() - parseInt(query.max) 
+        }
         const user = await db.userRunX.findMany({
             select:{
                 id:true,
@@ -177,7 +184,15 @@ export const getrankrunx = async () =>{
                 gender:true,
                 nationality: true,
                 birth_date: true
-
+            },
+            where:{
+                ...(Object.keys(query).length > 0 && {
+                    birth_date: {
+                        lte: new Date(`${minY}`),
+                        gte: new Date(`${maxY}`)
+                    }
+                }),
+                
             }
         })
         var rankuser = []
