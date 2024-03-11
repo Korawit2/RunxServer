@@ -175,6 +175,9 @@ export const getrankrunx = async () =>{
                 firstname_eng:true,
                 lastname_eng:true,
                 gender:true,
+                nationality: true,
+                birth_date: true
+
             }
         })
         var rankuser = []
@@ -191,7 +194,7 @@ export const getrankrunx = async () =>{
                     totalscore = totalscore + score
                 }
             }
-            const resultWithScore = await RaceResults(user[i], totalscore)
+            const resultWithScore = await RaceResults(user[i], totalscore, )
             rankuser.push(resultWithScore)
             
             
@@ -199,8 +202,19 @@ export const getrankrunx = async () =>{
         rankuser.sort((a, b) => {
             return a.totalscore - b.totalscore;
         });
+
         rankuser.reverse();
-        return rankuser
+        const dataConvert = rankuser.map((item,i) => {
+        return {
+            rank: i + 1,
+            name: item.name,
+            totalscore: item.totalscore,
+            gender: item.gender,
+            age: item.age,
+            nationality: item.nationality
+        }
+    })
+        return dataConvert
     }  
     catch (error) {
         console.log('error',error)
@@ -208,10 +222,21 @@ export const getrankrunx = async () =>{
     } 
 }
 
-const RaceResults = async (user: any, totalscore: number ) =>{
+const RaceResults = async (user: any, totalscore: number) =>{
+    var age : any = null
+    if (user.birth_date !== null) {
+        const date = new Date();
+        const dateY = date.getFullYear();
+        const d = user.birth_date.getFullYear()
+        age = dateY - d
+    }
     return{
         name: user.firstname_eng +" "+ user.lastname_eng,
         totalscore: totalscore,
-        gender: user.gender
+        gender: user.gender,
+        age: age,
+        nationality: user.nationality
     }
 }
+
+
