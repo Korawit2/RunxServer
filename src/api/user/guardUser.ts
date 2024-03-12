@@ -139,7 +139,7 @@ export const appUserguardPlugin = new Elysia()
 })
 .post("/users/changepassword", async ({body, set, profile}) =>{
     try {
-        const useremail = await changepassword(body,profile.email)
+        const useremail = await changepassword(body, profile.email)
         return useremail
     } catch (error) {
         set.status = 500
@@ -158,7 +158,7 @@ export const resetpassword = new Elysia()
 
 .post("/users/resetpassword", async ({body, set, profile}) =>{
     try {
-        const useremail = await changepassword(body,profile.email)
+        const useremail = await changepassword(body, profile.email)
         return useremail
     } catch (error) {
         set.status = 500
