@@ -40,7 +40,8 @@ export const checkemail = async (email: string) =>{
                 email: email
             },
             select:{
-                firstname_eng:true
+                firstname_eng:true,
+                password: true
             }
         })
         if (query != null) {
@@ -126,34 +127,42 @@ export const changepassword = async (user: any, email:any) =>{
         if (user.password === user.confirmpassword) {
             const isEmailExit = await checkemail(email)
             if (isEmailExit.isuser) {
-                user.password = await Bun.password.hash(user.password, {
-                    algorithm: 'bcrypt',
-                    cost: 10,
-                })
-                const updateUser: any = await db.userRunX.update({
-                    where: {
-                        email: email
-                    },
-                    data: {
-                        password: user.password
-                    },
-                }) 
-                // var client = new postmark.ServerClient(`${process.env.POSTMARK_TOKEN}`);
-                // client.sendEmailWithTemplate({
-                //     "From": "6322771930@g.siit.tu.ac.th",
-                //     "To": "6322772953@g.siit.tu.ac.th",
-                //     "TemplateAlias": "password-reset-1",
-                //     "TemplateModel": {
-                //     "product_name": "Runx",
-                //     "name": isEmailExit.query?.firstname_eng,
-                //     "action_url": "https://www.youtube.com/watch?v=btNmeVPdsT8",
-                //     "company_name": "Runx",
-                //     "company_address": "สวรรค์ชั้น 7",
-                //     }
-                // });
-                return {
-                    message: "change password complete"
+                const passUser: any = isEmailExit.query?.password
+                const isMatch = await Bun.password.verify(user.currentpassword, passUser);
+                if (isMatch) {
+                    user.password = await Bun.password.hash(user.password, {
+                        algorithm: 'bcrypt',
+                        cost: 10,
+                    })
+                    const updateUser: any = await db.userRunX.update({
+                        where: {
+                            email: email
+                        },
+                        data: {
+                            password: user.password
+                        },
+                    }) 
+                    // var client = new postmark.ServerClient(`${process.env.POSTMARK_TOKEN}`);
+                    // client.sendEmailWithTemplate({
+                    //     "From": "6322771930@g.siit.tu.ac.th",
+                    //     "To": "6322772953@g.siit.tu.ac.th",
+                    //     "TemplateAlias": "password-reset-1",
+                    //     "TemplateModel": {
+                    //     "product_name": "Runx",
+                    //     "name": isEmailExit.query?.firstname_eng,
+                    //     "action_url": "https://www.youtube.com/watch?v=btNmeVPdsT8",
+                    //     "company_name": "Runx",
+                    //     "company_address": "สวรรค์ชั้น 7",
+                    //     }
+                    // });
+                    return {
+                        message: "change password complete"
+                    }
                 }
+                return {
+                    message: "currentpassword is not match"
+                }
+                
             }
         }
         return {
@@ -253,5 +262,31 @@ const RaceResults = async (user: any, totalscore: number) =>{
         nationality: user.nationality
     }
 }
+
+export const nationinfor = async () =>{
+    const groupBy = await db.userRunX.groupBy({
+        by: ['nationality'],
+            _count: {
+                nationality: true,
+            },
+        orderBy: {
+                nationality: "asc"
+        },
+    })
+    var x_axis = []
+    var y_axis = []
+    if (groupBy.length > 0) {
+        for (let i = 0; i < groupBy.length; i++) {
+            x_axis.push(groupBy[i].nationality)
+            y_axis.push(groupBy[i]._count.nationality)
+        }
+    }
+    return {
+        x_axis: x_axis,
+        y_axis: y_axis
+    }
+}
+
+
 
 

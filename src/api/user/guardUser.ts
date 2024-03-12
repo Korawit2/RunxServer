@@ -150,6 +150,7 @@ export const appUserguardPlugin = new Elysia()
     }
 },{
     body: t.Object({
+        currentpassword: t.String(),
         password: t.String(),
         confirmpassword: t.String()
     })

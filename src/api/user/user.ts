@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { jwt } from '@elysiajs/jwt'
-import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin,changepassword, getrankrunx} from '../../query/user/userquery';
+import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin,changepassword, getrankrunx, nationinfor } from '../../query/user/userquery';
 import  postmark  from "postmark"
 import { number } from "elysia/dist/error";
 
@@ -192,4 +192,20 @@ export const appPlugin = new Elysia()
         max: t.Optional(t.String()) 
     })
 })
+
+.get("/runner/graph", async ({set}) =>{
+    try{
+        const infomation = await nationinfor()
+        return infomation
+    }
+    catch (error) {
+        set.status = 500
+        return {
+            message: 'error',
+            error        
+        }
+    }
+})
+
+
 

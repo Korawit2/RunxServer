@@ -69,6 +69,7 @@ export const raceResult = async (email: string, query: any) =>{
                         take: parseInt(query.limit)
                     })
                 })
+                
                 if (race.length) {
                     var result: any = []
                     for (let i = 0; i < race.length; i++) {
