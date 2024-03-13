@@ -193,9 +193,13 @@ export const appPlugin = new Elysia()
     })
 })
 
-.get("/runner/graph", async ({set}) =>{
+.get("/runner/graph", async ({query ,set}) =>{
     try{
-        const infomation = await nationinfor()
+        var continent: any = null
+        if (query.continent) {
+            continent = query.continent
+        }
+        const infomation = await nationinfor(continent)
         return infomation
     }
     catch (error) {
@@ -205,6 +209,10 @@ export const appPlugin = new Elysia()
             error        
         }
     }
+},{
+    query: t.Object({
+        continent: t.Optional(t.String())
+    })
 })
 
 

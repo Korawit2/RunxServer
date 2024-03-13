@@ -1,10 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 import  postmark  from "postmark"
 import { calculateScore } from '../../function/calculate'
-import continent from ''
 import { type } from 'os'
 const db = new PrismaClient()
-
+import continents from '../../../JSON/countryByContinent.json'
 
 export const checkAdmin = async (admin: any) =>{
     try {
@@ -265,13 +264,16 @@ const RaceResults = async (user: any, totalscore: number) =>{
     }
 }
 
-export const nationinfor = async () =>{
+export const nationinfor = async (continent: string) =>{
     try {
-        fetch('./JSON/country-by-continent.json').then(function( res ){
-            return res.json();
-        }).then(function( Object){
-            console.log(Object)
-        })
+        var country = []
+        if (continent !== null) {
+            for (let i = 0; i < continents.length; i++) {
+                if (continents[i].continent == continent) {
+                    country.push(continents[i].country)
+                }
+            }
+        }
         const groupBy = await db.userRunX.groupBy({
             by: ['nationality'],
                 _count: {
@@ -280,6 +282,13 @@ export const nationinfor = async () =>{
             orderBy: {
                     nationality: "asc"
             },
+            where:{
+                ...(continent !== null && {
+                    nationality:{
+                        in: country
+                    }
+                }),
+            }
         })
         var x_axis = []
         var y_axis = []
