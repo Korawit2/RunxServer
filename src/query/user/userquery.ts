@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import  postmark  from "postmark"
 import { calculateScore } from '../../function/calculate'
+import continent from ''
+import { type } from 'os'
 const db = new PrismaClient()
 
 
@@ -264,27 +266,38 @@ const RaceResults = async (user: any, totalscore: number) =>{
 }
 
 export const nationinfor = async () =>{
-    const groupBy = await db.userRunX.groupBy({
-        by: ['nationality'],
-            _count: {
-                nationality: true,
+    try {
+        fetch('./JSON/country-by-continent.json').then(function( res ){
+            return res.json();
+        }).then(function( Object){
+            console.log(Object)
+        })
+        const groupBy = await db.userRunX.groupBy({
+            by: ['nationality'],
+                _count: {
+                    nationality: true,
+                },
+            orderBy: {
+                    nationality: "asc"
             },
-        orderBy: {
-                nationality: "asc"
-        },
-    })
-    var x_axis = []
-    var y_axis = []
-    if (groupBy.length > 0) {
-        for (let i = 0; i < groupBy.length; i++) {
-            x_axis.push(groupBy[i].nationality)
-            y_axis.push(groupBy[i]._count.nationality)
+        })
+        var x_axis = []
+        var y_axis = []
+        if (groupBy.length > 0) {
+            for (let i = 0; i < groupBy.length; i++) {
+                x_axis.push(groupBy[i].nationality)
+                y_axis.push(groupBy[i]._count.nationality)
+            }
         }
+        return {
+            x_axis: x_axis,
+            y_axis: y_axis
+        }
+    } catch (error) {
+        console.log('error',error)
+        return { status: 'error', error}
     }
-    return {
-        x_axis: x_axis,
-        y_axis: y_axis
-    }
+    
 }
 
 
