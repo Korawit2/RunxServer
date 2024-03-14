@@ -195,9 +195,9 @@ export const appPlugin = new Elysia()
 
 .get("/runner/graph", async ({query ,set}) =>{
     try{
-        var continent: any = null
+        var continent: any = false
         if (query.continent) {
-            continent = query.continent
+            continent = true
         }
         const infomation = await nationinfor(continent)
         return infomation

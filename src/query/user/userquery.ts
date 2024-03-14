@@ -282,14 +282,48 @@ export const nationinfor = async (continent: string) =>{
             orderBy: {
                     nationality: "asc"
             },
-            where:{
-                ...(continent !== null && {
-                    nationality:{
-                        in: country
-                    }
-                }),
-            }
         })
+        var continentOfuser = []
+        if (continent) {
+            for (let i = 0; i <  groupBy.length; i++) {
+                for (let j = 0; j < continents.length; j++) {
+                    if (groupBy[i].nationality === continents[j].country) {
+                        if (continentOfuser.length === 0) {
+                            const data = {
+                                continent: continents[j].continent,
+                                total: groupBy[i]._count.nationality
+                            }
+                            continentOfuser.push(data)
+                            { continue; }
+                        }
+                        if (continentOfuser.some(e => e.continent === continents[j].continent )) {
+                            const index = continentOfuser.findIndex(x => x.continent === continents[j].continent)
+                            continentOfuser[index].total = continentOfuser[index].total + groupBy[i]._count.nationality
+                            { continue; }
+                        }
+                        const data = {
+                            continent: continents[j].continent,
+                            total: groupBy[i]._count.nationality
+                        }
+                        continentOfuser.push(data)
+
+                    }
+                } 
+                
+            }
+            var x_axis = []
+            var y_axis = []
+            if (continentOfuser.length > 0) {
+                for (let i = 0; i < continentOfuser.length; i++) {
+                    x_axis.push(continentOfuser[i].continent)
+                    y_axis.push(continentOfuser[i].total)
+                }
+            }
+            return {
+                x_axis: x_axis,
+                y_axis: y_axis
+            }
+        }
         var x_axis = []
         var y_axis = []
         if (groupBy.length > 0) {
