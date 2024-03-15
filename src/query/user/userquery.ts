@@ -111,6 +111,7 @@ export const checkUser = async (user: any) =>{
             }
             
             return {
+                id: queryuser.id,
                 loggedIn: true,
                 role: "user"
             } 

@@ -71,11 +71,13 @@ export const appPlugin = new Elysia()
             status: false,
             }
         }
+        console.log(res)
         const token = await jwt.sign({
             email: userData.email,
             role: res.role
         })
         return {
+            id: res.id,
             status: true,
             token: token,
             //role: res.role
