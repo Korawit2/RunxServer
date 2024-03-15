@@ -3,11 +3,11 @@ import { calculateScore } from '../../function/calculate'
 const db = new PrismaClient()
 import * as interface_ from "../../interface";
 
-export const getUserByEmail = async (profile :string) =>{
+export const getUserByID = async (userid :string) =>{
     try {
         const queryUser = await db.userRunX.findUnique({
             where: {
-                email: profile
+                id: parseInt(userid) 
             },
             select:{
                 id: true,
@@ -30,11 +30,11 @@ export const getUserByEmail = async (profile :string) =>{
     } 
 }
 
-export const raceResult = async (email: string, query: any) =>{
+export const raceResult = async (id: string, query: any) =>{
     try {
         const user: any = await db.userRunX.findUnique({
             where: {
-                email: email
+                id: parseInt(id) 
             },
             select:{
                 firstname_eng: true,
@@ -69,7 +69,6 @@ export const raceResult = async (email: string, query: any) =>{
                         take: parseInt(query.limit)
                     })
                 })
-                
                 if (race.length) {
                     var result: any = []
                     for (let i = 0; i < race.length; i++) {

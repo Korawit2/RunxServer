@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import {getUserByEmail,  getAllUser, updateUserOption, updateUser, claimPoint, totalPoint, raceResult} from '../../query/user/guarduserQuery';
+import { getAllUser, updateUserOption, updateUser, claimPoint, totalPoint, raceResult} from '../../query/user/guarduserQuery';
 import { changepassword } from '../../query/user/userquery';
 import * as interface_ from "../../interface";
 
@@ -8,45 +8,6 @@ import * as interface_ from "../../interface";
 
 const db = new PrismaClient()
 export const appUserguardPlugin = new Elysia()
-
-.get("/currentusers", async ({profile}) => {
-    if (profile.role == "user") {
-        const user: any = await getUserByEmail(profile.email)
-        const total_Point: any =  await totalPoint(user.id)
-        const resultWithScore: any = {
-            totalPoint: total_Point,
-            user
-            
-        };
-        return resultWithScore
-    }
-})
-
-.get("/races/result", async ({profile, query ,set}) => {
-    try {
-        if (profile.role == "user") {
-            try {
-                const result = await raceResult(profile.email, query)
-                return result
-            } catch (error) {
-                set.status = 500
-                return {
-                    message: "fail"     
-                }
-            }
-        }
-    } catch (error) {
-        console.log('error',error)
-        return []
-    } 
-    
-},{
-    query: t.Object({
-        limit: t.Optional(t.String()),
-        sortBy: t.String()
-    })
-})
-
 
 .post("currentusers", async ({body, set, profile})=> {
     try {
@@ -174,5 +135,7 @@ export const resetpassword = new Elysia()
         confirmpassword: t.String()
     })
 })
+
+
 
 

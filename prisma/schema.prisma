@@ -11,7 +11,7 @@ datasource db {
 }
 
 model UserRunX {
-  id             Int       @id @default(autoincrement())
+  id             Int       @id @unique @default(autoincrement())
   firstname_eng  String
   lastname_eng   String
   firstname_thai String?

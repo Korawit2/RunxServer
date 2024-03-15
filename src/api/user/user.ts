@@ -4,6 +4,7 @@ import { jwt } from '@elysiajs/jwt'
 import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin,changepassword, getrankrunx, nationinfor } from '../../query/user/userquery';
 import  postmark  from "postmark"
 import { number } from "elysia/dist/error";
+import { getUserByID, totalPoint, raceResult } from "../../query/user/guarduserQuery";
 
 
 const db = new PrismaClient()
@@ -212,6 +213,51 @@ export const appPlugin = new Elysia()
 },{
     query: t.Object({
         continent: t.Optional(t.String())
+    })
+})
+
+export const appUsers = new Elysia()
+
+.get("/currentusers/:id", async ({params}) => {
+    
+        const user: any = await getUserByID(params.id)
+        const total_Point: any =  await totalPoint(user.id)
+        const resultWithScore: any = {
+            totalPoint: total_Point,
+            user
+            
+        };
+        return resultWithScore
+    
+},{
+    params: t.Object({
+        id: t.String()
+    })
+})
+
+.get("/races/result/:id", async ({params, query ,set}) => {
+    try {
+            try {
+                const result = await raceResult(params.id, query)
+                return result
+            } catch (error) {
+                set.status = 500
+                return {
+                    message: "fail"     
+                }
+            }
+    } catch (error) {
+        console.log('error',error)
+        return []
+    } 
+    
+},{
+    query: t.Object({
+        limit: t.Optional(t.String()),
+        sortBy: t.String()
+    }),
+    params: t.Object({
+        id: t.String()
     })
 })
 

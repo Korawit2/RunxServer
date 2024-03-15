@@ -9,6 +9,7 @@ import { appgetEventPlugin, appgetfillterEventPlugin } from './api/org_Events/Ev
 import { appUser } from "./server/serverUser";
 import { appAdmin } from "./server/serverAdmin";
 import { resetpasswords } from "./server/resetpassword";
+import { appUsers } from "./api/user/user";
 
 
 
@@ -37,6 +38,7 @@ const app = new Elysia()
   .use(appAdmin)
   .use(resetpasswords)
 
+  .use(appUsers)
   .use(getraces)
   .use(appgetEventPlugin)
   .use(appPlugin)
