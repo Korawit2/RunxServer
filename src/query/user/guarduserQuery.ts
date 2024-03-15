@@ -7,7 +7,36 @@ export const getUserByID = async (userid :string) =>{
     try {
         const queryUser = await db.userRunX.findUnique({
             where: {
-                id: parseInt(userid) 
+                id: parseInt(userid)
+                
+            },
+            select:{
+                id: true,
+                firstname_eng: true,
+                lastname_eng: true,
+                birth_date: true,
+                gender: true,
+                email: true,
+                id_passport: true,
+                nationality: true,
+                user_img: true,
+            }
+        })
+        return queryUser
+        
+        
+    } catch (error) {
+        console.log('error',error)
+        return []
+    } 
+}
+
+export const getUserByemail = async (userid :string) =>{
+    try {
+        const queryUser = await db.userRunX.findUnique({
+            where: {
+                email: userid
+                
             },
             select:{
                 id: true,
@@ -69,6 +98,7 @@ export const raceResult = async (id: string, query: any) =>{
                         take: parseInt(query.limit)
                     })
                 })
+
                 if (race.length) {
                     var result: any = []
                     for (let i = 0; i < race.length; i++) {
