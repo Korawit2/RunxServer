@@ -235,10 +235,10 @@ export const appUsers = new Elysia()
     })
 })
 
-.get("/races/result/:id", async ({params, query ,set}) => {
+.get("/races/result/", async ({query ,set}) => {
     try {
             try {
-                const result = await raceResult(params.id, query)
+                const result = await raceResult(query.id, query)
                 return result
             } catch (error) {
                 set.status = 500
@@ -253,12 +253,11 @@ export const appUsers = new Elysia()
     
 },{
     query: t.Object({
+        id: t.String(),
         limit: t.Optional(t.String()),
-        sortBy: t.String()
+        sortBy: t.String(),
+        
     }),
-    params: t.Object({
-        id: t.String()
-    })
 })
 
 
