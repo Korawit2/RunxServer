@@ -313,30 +313,26 @@ export const nationinfor = async (continent: string) =>{
                 } 
                 
             }
-            var x_axis = []
-            var y_axis = []
-            if (continentOfuser.length > 0) {
-                for (let i = 0; i < continentOfuser.length; i++) {
-                    x_axis.push(continentOfuser[i].continent)
-                    y_axis.push(continentOfuser[i].total)
+            
+            const result = continentOfuser.map((item)=>{
+                return {
+                    continent: item.continent,
+                    total: item.total
                 }
-            }
+            })
             return {
-                x_axis: x_axis,
-                y_axis: y_axis
+                result
             }
         }
-        var x_axis = []
-        var y_axis = []
-        if (groupBy.length > 0) {
-            for (let i = 0; i < groupBy.length; i++) {
-                x_axis.push(groupBy[i].nationality)
-                y_axis.push(groupBy[i]._count.nationality)
+        
+        const result = groupBy.map((item)=>{
+            return {
+                country: item.nationality,
+                total: item._count.nationality
             }
-        }
+        })
         return {
-            x_axis: x_axis,
-            y_axis: y_axis
+            result
         }
     } catch (error) {
         console.log('error',error)

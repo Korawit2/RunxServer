@@ -218,7 +218,7 @@ export const appPlugin = new Elysia()
 
 export const appUsers = new Elysia()
 
-.get("/currentusers/:id", async ({params}) => {
+.get("/userProfile/:id", async ({params}) => {
     
         const user: any = await getUserByID(params.id)
         const total_Point: any =  await totalPoint(user.id)
