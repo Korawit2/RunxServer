@@ -231,6 +231,7 @@ export const getrankrunx = async (query: any) =>{
         rankuser.reverse();
         const dataConvert = rankuser.map((item,i) => {
         return {
+            id: item.id,
             rank: i + 1,
             name: item.name,
             totalscore: item.totalscore,
@@ -256,6 +257,7 @@ const RaceResults = async (user: any, totalscore: number) =>{
         age = dateY - d
     }
     return{
+        id: user.id,
         name: user.firstname_eng +" "+ user.lastname_eng,
         totalscore: totalscore,
         gender: user.gender,
