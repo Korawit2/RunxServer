@@ -299,7 +299,7 @@ export const nationinfor = async (continent: string) =>{
                             continentOfuser.push(data)
                             { continue; }
                         }
-                        if (continentOfuser.some(e => e.continent === continents[j].continent )) {
+                        if (continentOfuser.some(e => e.continent === continents[j].continent)) {
                             const index = continentOfuser.findIndex(x => x.continent === continents[j].continent)
                             continentOfuser[index].total = continentOfuser[index].total + groupBy[i]._count.nationality
                             { continue; }
@@ -342,6 +342,44 @@ export const nationinfor = async (continent: string) =>{
     
 }
 
+
+export const runnerDistances = async (allRaces: any, year: number) =>{
+    try {
+        const result = []
+        if (allRaces.length > 0) {
+            for (let i = 0; i < allRaces.length; i++) {
+                if (allRaces[i].date.getFullYear() == year) {
+                    if (result.length === 0) {
+                        const data = {
+                            Month: allRaces[i].date.getMonth(),
+                            totalDistances: allRaces[i].distance
+                        }
+                        result.push(data)
+                        { continue; }
+                    }
+                    if (result.some(e => e.Month === allRaces[i].date.getMonth())) {
+                        const index = result.findIndex(x => x.Month === allRaces[i].date.getMonth())
+                        result[index].totalDistances = result[index].totalDistances + allRaces[i].distance
+                        { continue; }
+                    }
+                    const data = {
+                        Month: allRaces[i].date.getMonth(),
+                        totalDistances: allRaces[i].distance
+                    }
+                    result.push(data)
+                }
+            }
+        }
+        return {
+            year: year,
+            result: result
+        }
+
+    } catch (error) {
+        console.log('error',error)
+        return { status: 'error', error}
+    }
+}
 
 
 

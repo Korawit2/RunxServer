@@ -1,9 +1,8 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { jwt } from '@elysiajs/jwt'
-import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin,changepassword, getrankrunx, nationinfor } from '../../query/user/userquery';
+import { checkemail,  duplecateUser, createUser, checkUser, checkAdmin,getrankrunx, nationinfor, runnerDistances} from '../../query/user/userquery';
 import  postmark  from "postmark"
-import { number } from "elysia/dist/error";
 import { getUserByID, totalPoint, raceResult } from "../../query/user/guarduserQuery";
 
 
@@ -240,7 +239,11 @@ export const appUsers = new Elysia()
 .get("/races/result/", async ({query ,set}) => {
     try {
             try {
-                const result = await raceResult(query.id, query)
+                var methodSort = "desc"
+                if (query.method !== null) {
+                    methodSort = query.method
+                }
+                const result = await raceResult(query.id, methodSort, query.limit)
                 return result
             } catch (error) {
                 set.status = 500
@@ -250,16 +253,41 @@ export const appUsers = new Elysia()
             }
     } catch (error) {
         console.log('error',error)
-        return []
+        return {
+            message: 'error',
+            error        
+        }
     } 
     
 },{
     query: t.Object({
         id: t.String(),
         limit: t.Optional(t.String()),
-        sortBy: t.String(),
+        method: t.Optional(t.String()),
         
     }),
+})
+
+.get("/runners/distances", async ({query, set}) => {
+    try{
+        const userId = query.id
+        const allRaces = await raceResult(userId, "desc", null)
+        const result = await runnerDistances(allRaces, parseInt(query.year))
+        return result
+
+    } catch (error) {
+        set.status = 500
+        console.log('error',error)
+        return {
+            message: 'error',
+            error        
+        }
+    }
+},{
+    query: t.Object({
+        id: t.String(),
+        year: t.String()
+    })
 })
 
 

@@ -59,7 +59,7 @@ export const getUserByemail = async (userid :string) =>{
     } 
 }
 
-export const raceResult = async (id: string, query: any) =>{
+export const raceResult = async (id: string, method: any, limit: any) =>{
     try {
         const user: any = await db.userRunX.findUnique({
             where: {
@@ -92,10 +92,10 @@ export const raceResult = async (id: string, query: any) =>{
                         }
                     },
                     orderBy: {
-                        date: query.sortBy,
+                        date: method,
                     },
-                    ...(query.limit != null && {
-                        take: parseInt(query.limit)
+                    ...(limit != null && {
+                        take: parseInt(limit)
                     })
                 })
 
@@ -277,7 +277,7 @@ const detailasync =  async (race: any, score: number, allrace: number) =>{
         logoImg: race.logo_img,
         date: race.date,
         name: race.name,
-        distance: `${race.distance}KM`,
+        distance: race.distance,
         rank: `${race.Race_result[0].rank}/${allrace}`,
         time: race.Race_result[0].time,
         claim_status: race.Race_result[0].claim_status,
