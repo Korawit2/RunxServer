@@ -111,7 +111,8 @@ export const raceResult = async (id: string, method: any, limit: any) =>{
                             }
                         })
                         const score: any = await calculateScore(race[i].Race_result[0].rank)
-                        const resultWithScore = await detailasync(race[i], score, AllRaceresultId._count.Races_id)
+                        const findPace = await pace(race[i].Race_result[0].time, race[i].distance)
+                        const resultWithScore = await detailasync(race[i], score, AllRaceresultId._count.Races_id, findPace)
                         result.push(resultWithScore)   
                     }
                     return result
@@ -267,10 +268,17 @@ export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
     } 
 }
 
+export const pace = async (time: any, distance: any) =>{
+    const array = time.split(":")
+    var min: any = 0
+    min = min + parseInt(array[0]) * 60 
+    min = min + parseInt(array[1])
+    min = min + parseInt(array[2]) / 60
+    const pace = parseInt(min.toFixed(2)) / distance
+    return pace.toFixed(2)
+}
 
-
-
-const detailasync =  async (race: any, score: number, allrace: number) =>{
+const detailasync =  async (race: any, score: number, allrace: number, pace: any) =>{
     return {
         ResultId: race.Race_result[0].id,
         Races_id: race.id,
@@ -278,17 +286,10 @@ const detailasync =  async (race: any, score: number, allrace: number) =>{
         date: race.date,
         name: race.name,
         distance: race.distance,
+        pace: pace,
         rank: `${race.Race_result[0].rank}/${allrace}`,
         time: race.Race_result[0].time,
         claim_status: race.Race_result[0].claim_status,
         score : score.toFixed(0)
     }
 }
-
-
-
-
-
-
-
-

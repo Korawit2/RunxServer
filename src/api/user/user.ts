@@ -240,7 +240,7 @@ export const appUsers = new Elysia()
     try {
             try {
                 var methodSort = "desc"
-                if (query.method !== null) {
+                if (query.method) {
                     methodSort = query.method
                 }
                 const result = await raceResult(query.id, methodSort, query.limit)
