@@ -159,7 +159,7 @@ export const appPlugin = new Elysia()
             }
         }
         return {
-            message: 'email does ont exit'
+            message: 'email does not exit'
         }
     } catch (error) {
         set.status = 500

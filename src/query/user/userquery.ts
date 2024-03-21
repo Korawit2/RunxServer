@@ -126,45 +126,51 @@ export const checkUser = async (user: any) =>{
 
 export const changepassword = async (user: any, email:any) =>{
     try {
+        
         if (user.password === user.confirmpassword) {
-            const isEmailExit = await checkemail(email)
+            const isEmailExit = await checkemail(email.email)
             if (isEmailExit.isuser) {
-                const passUser: any = isEmailExit.query?.password
-                const isMatch = await Bun.password.verify(user.currentpassword, passUser);
-                if (isMatch) {
-                    user.password = await Bun.password.hash(user.password, {
-                        algorithm: 'bcrypt',
-                        cost: 10,
-                    })
-                    const updateUser: any = await db.userRunX.update({
-                        where: {
-                            email: email
-                        },
-                        data: {
-                            password: user.password
-                        },
-                    }) 
-                    // var client = new postmark.ServerClient(`${process.env.POSTMARK_TOKEN}`);
-                    // client.sendEmailWithTemplate({
-                    //     "From": "6322771930@g.siit.tu.ac.th",
-                    //     "To": "6322772953@g.siit.tu.ac.th",
-                    //     "TemplateAlias": "password-reset-1",
-                    //     "TemplateModel": {
-                    //     "product_name": "Runx",
-                    //     "name": isEmailExit.query?.firstname_eng,
-                    //     "action_url": "https://www.youtube.com/watch?v=btNmeVPdsT8",
-                    //     "company_name": "Runx",
-                    //     "company_address": "สวรรค์ชั้น 7",
-                    //     }
-                    // });
-                    return {
-                        message: "change password complete"
+                if ( email.role === "user" ) {
+                    const passUser: any = isEmailExit.query?.password
+                    const isMatch = await Bun.password.verify(user.currentpassword, passUser);
+                    if (!isMatch) {
+                        return {
+                            message: "currentpassword is not match"
+                        }
                     }
                 }
-                return {
-                    message: "currentpassword is not match"
-                }
+
+            }
+            if (email.role === "user" || email.role === "resetpassword") {
+                user.password = await Bun.password.hash(user.password, {
+                    algorithm: 'bcrypt',
+                    cost: 10,
+                })
                 
+                const updateUser: any = await db.userRunX.update({
+                    where: {
+                        email: email.email
+                    },
+                    data: {
+                        password: user.password
+                    },
+                }) 
+                // var client = new postmark.ServerClient(`${process.env.POSTMARK_TOKEN}`);
+                // client.sendEmailWithTemplate({
+                //     "From": "6322771930@g.siit.tu.ac.th",
+                //     "To": "6322772953@g.siit.tu.ac.th",
+                //     "TemplateAlias": "password-reset-1",
+                //     "TemplateModel": {
+                //     "product_name": "Runx",
+                //     "name": isEmailExit.query?.firstname_eng,
+                //     "action_url": "https://www.youtube.com/watch?v=btNmeVPdsT8",
+                //     "company_name": "Runx",
+                //     "company_address": "สวรรค์ชั้น 7",
+                //     }
+                // });
+                return {
+                    message: "change password complete"
+                }
             }
         }
         return {
