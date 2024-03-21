@@ -98,7 +98,7 @@ export const raceResult = async (id: string, method: any, limit: any) =>{
                         take: parseInt(limit)
                     })
                 })
-
+                
                 if (race.length) {
                     var result: any = []
                     for (let i = 0; i < race.length; i++) {
@@ -112,7 +112,8 @@ export const raceResult = async (id: string, method: any, limit: any) =>{
                         })
                         const score: any = await calculateScore(race[i].Race_result[0].rank)
                         const findPace = await pace(race[i].Race_result[0].time, race[i].distance)
-                        const resultWithScore = await detailasync(race[i], score, AllRaceresultId._count.Races_id, findPace)
+                        const pace_Avg = await paceAvg(race[i].id) 
+                        const resultWithScore = await detailasync(race[i], score, AllRaceresultId._count.Races_id, findPace, pace_Avg)
                         result.push(resultWithScore)   
                     }
                     return result
@@ -240,7 +241,7 @@ export const claimPoint = async (query: {resultId: any, runxId: any}, profile: {
 }
 
 
-export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
+export const totalPoint = async (runxId: number) =>{
     try {   
         var totalPoint: number = 0
         const reacesResult = await db.race_result.findMany({
@@ -267,6 +268,45 @@ export const totalPoint = async (runxId: number, checkTotalPoint?: boolean) =>{
         return { status: "fail"}
     } 
 }
+export const paceAvg = async (id: any) =>{
+    try {
+        const data = await db.races.findMany({
+            select:{
+                distance:true,
+                Race_result:{
+                    where:{
+                        Races_id:id
+                    },
+                    select:{
+                        time:true
+                    }
+                }
+            },
+            where:{
+                id: id
+            }
+        })
+        if (data.length > 0) {
+            var allPanc = []
+            var avg = 0;
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < data[i].Race_result.length; j++) {
+                    const findPace = await pace(data[i].Race_result[j].time, data[i].distance )
+                    allPanc.push(parseFloat(findPace))
+                }
+                let sum = 0
+                for (let i = 0; i < allPanc.length; i++) {
+                    sum += allPanc[i];
+                }
+                avg = sum / data[i].Race_result.length
+            } 
+            return avg.toFixed(2)
+        }
+    } catch (error) {
+        console.log('error',error)
+        return { status: "fail"}
+    }
+}
 
 export const pace = async (time: any, distance: any) =>{
     const array = time.split(":")
@@ -278,7 +318,7 @@ export const pace = async (time: any, distance: any) =>{
     return pace.toFixed(2)
 }
 
-const detailasync =  async (race: any, score: number, allrace: number, pace: any) =>{
+const detailasync =  async (race: any, score: number, allrace: number, pace: any, pace_Avg:any) =>{
     return {
         ResultId: race.Race_result[0].id,
         Races_id: race.id,
@@ -287,6 +327,7 @@ const detailasync =  async (race: any, score: number, allrace: number, pace: any
         name: race.name,
         distance: race.distance,
         pace: pace,
+        pace_Avg: pace_Avg,
         rank: `${race.Race_result[0].rank}/${allrace}`,
         time: race.Race_result[0].time,
         claim_status: race.Race_result[0].claim_status,
