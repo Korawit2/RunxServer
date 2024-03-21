@@ -55,7 +55,7 @@ export const appUserguardPlugin = new Elysia()
         }
         const res = await updateUser(userBody, profile)
         if (res.status == "ok") {
-            const user: any = await getUserByEmail(profile.email)
+            const user: any = await getUserByemail(profile.email)
             return {
                 message: "Edit successful",
                 user: user.user
