@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import { resetpassword } from '../api/user/guardUser'
+import { resetpassword } from '../api/user/users'
 
 export const resetpasswords = new Elysia()
     .guard({

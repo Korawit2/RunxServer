@@ -1,11 +1,11 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-
-import {createRace, queryRunner} from '../../query/races/racesQuery';
+import { raceResult } from "../../query/user/guarduserQuery";
+import { createRace, queryRunner} from '../../query/races/racesQuery';
 import { eventYear } from '../../query/org_Events/event_query'
+
+
 const db = new PrismaClient()
-
-
 export const appRacesPlugin = new Elysia()
     .post("/races", async ({body ,query, set, params})=>{
         try {
@@ -70,4 +70,36 @@ export const getraces = new Elysia()
             name: t.Optional(t.String()),
             gender: t.Optional(t.String()),
         })
+    })
+
+    .get("/races/result/", async ({query ,set}) => {
+        try {
+                try {
+                    var methodSort = "desc"
+                    if (query.method) {
+                        methodSort = query.method
+                    }
+                    const result = await raceResult(query.id, methodSort, query.limit)
+                    return result
+                } catch (error) {
+                    set.status = 500
+                    return {
+                        message: "fail"     
+                    }
+                }
+        } catch (error) {
+            console.log('error',error)
+            return {
+                message: 'error',
+                error        
+            }
+        } 
+        
+    },{
+        query: t.Object({
+            id: t.String(),
+            limit: t.Optional(t.String()),
+            method: t.Optional(t.String()),
+            
+        }),
     })

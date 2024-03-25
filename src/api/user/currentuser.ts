@@ -1,13 +1,9 @@
+
 import { Elysia, t } from "elysia";
-import { PrismaClient } from '@prisma/client'
-import { getAllUser, updateUserOption, updateUser, claimPoint, totalPoint, raceResult, getUserByemail} from '../../query/user/guarduserQuery';
-import { changepassword } from '../../query/user/userquery';
+import { totalPoint, getUserByemail, updateUserOption, updateUser, claimPoint } from '../../query/user/guarduserQuery';
 import * as interface_ from "../../interface";
 
-
-
-const db = new PrismaClient()
-export const appUserguardPlugin = new Elysia()
+export const currentusersPlugin = new Elysia()
 .get("/currentusers", async ({profile}) => {
     
     const user: any = await getUserByemail(profile.email)
@@ -20,7 +16,6 @@ export const appUserguardPlugin = new Elysia()
     return resultWithScore
 
 })
-
 .post("currentusers", async ({body, set, profile})=> {
     try {
         const userBody = body;
@@ -81,73 +76,31 @@ export const appUserguardPlugin = new Elysia()
         user_img: t.Optional(t.String())
         })
     })
-
-.post("/currentusers/claim/score", async ({query, set, profile}) =>{
-    try {
-        const claim: any = await claimPoint(query, profile)
-        if (claim) {
-            if (claim.status) {
-                return {
-                    runx_id: query.runxId,
-                    Races_id: query.resultId,
-                    message: "claim successful"
+    .post("/currentusers/claim/score", async ({query, set, profile}) =>{
+        try {
+            const claim: any = await claimPoint(query, profile)
+            if (claim) {
+                if (claim.status) {
+                    return {
+                        runx_id: query.runxId,
+                        Races_id: query.resultId,
+                        message: "claim successful"
+                    }
                 }
+                return "you have no right to claim this point"
             }
-            return "you have no right to claim this point"
-        }
-        return {
-            message: "claim fail"
-        }
-        
-    } catch  (error) {
-        set.status = 500
-        return {
-            message: "claim fail"     
-        }}
-},{
-    query: t.Object({
-        resultId: t.String(),
-        runxId: t.String()
+            return {
+                message: "claim fail"
+            }
+            
+        } catch  (error) {
+            set.status = 500
+            return {
+                message: "claim fail"     
+            }}
+    },{
+        query: t.Object({
+            resultId: t.String(),
+            runxId: t.String()
+        })
     })
-})
-.post("/users/changepassword", async ({body, set, profile}) =>{
-    try {
-        const useremail = await changepassword(body, profile)
-        return useremail
-    } catch (error) {
-        set.status = 500
-        return {
-            message: 'error',
-            error        
-        }
-    }
-},{
-    body: t.Object({
-        currentpassword: t.String(),
-        password: t.String(),
-        confirmpassword: t.String()
-    })
-})
-export const resetpassword = new Elysia()
-
-.post("/users/resetpassword", async ({body, set, profile}) =>{
-    try {
-        const useremail = await changepassword(body, profile)
-        return useremail
-    } catch (error) {
-        set.status = 500
-        return {
-            message: 'error',
-            error        
-        }
-    }
-},{
-    body: t.Object({
-        password: t.String(),
-        confirmpassword: t.String()
-    })
-})
-
-
-
-

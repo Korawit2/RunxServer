@@ -1,9 +1,7 @@
 import { Elysia, t } from "elysia";
-import { appUserguardPlugin } from '../api/user/guardUser'
-import { getraces } from '../api/races/races'
-import { appgetOrgPlugin } from '../api/org_Events/Organization'
-import { appgetEventPlugin } from '../api/org_Events/Events'
-
+import { appUsersPlugin, } from '../api/user/users'
+import { currentusersPlugin } from '../api/user/currentuser'
+import { appuploadImg } from "../api/user/uploadimg"
 
 export const appUser = new Elysia()
     .guard({
@@ -18,7 +16,7 @@ export const appUser = new Elysia()
     }
     }, (app) =>
                 app
-                .use(appUserguardPlugin)
-                .use(appgetOrgPlugin)
-                
+                .use(appuploadImg)
+                .use(currentusersPlugin)
+                .use(appUsersPlugin)
     )
