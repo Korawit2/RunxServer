@@ -6,7 +6,7 @@ import { swagger } from '@elysiajs/swagger'
 import { appgetEventPlugin, appgetfillterEventPlugin } from './api/org_Events/Events'
 import { appUser } from "./server/serverUser";
 import { appAdmin } from "./server/serverAdmin";
-import { resetpasswords } from "./server/resetpassword";
+import { resetpassword } from "./api/user/users";
 import { appUsers } from "./api/user/users";
 import { appRunnerPlugin } from "./api/runner/runners"
 import { appSingupPlugin } from './api/user/singup'
@@ -35,7 +35,7 @@ const app = new Elysia()
   .use(appUser)
 
   .use(appAdmin)
-  .use(resetpasswords)
+  .use(resetpassword)
   .use(appSingupPlugin)
   .use(appLoginPlugin)
   .use(appUsers)

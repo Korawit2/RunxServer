@@ -21,7 +21,6 @@ export const appLoginPlugin = new Elysia()
             status: false,
             }
         }
-        console.log(res)
         const token = await jwt.sign({
             email: userData.email,
             role: res.role
