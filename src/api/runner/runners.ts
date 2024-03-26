@@ -1,6 +1,5 @@
 import { Elysia, t } from "elysia";
-import { nationinfor, runnerDistances } from '../../query/user/userquery';
-import { raceResult } from "../../query/user/guarduserQuery";
+import { nationinfor, runnerDistances, raceResult } from '../../query/runner/queryrunner';
 
 export const appRunnerPlugin = new Elysia()
 

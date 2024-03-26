@@ -1,6 +1,6 @@
 
 import { Elysia, t } from "elysia";
-import { totalPoint, getUserByemail, updateUserOption, updateUser, claimPoint } from '../../query/user/guarduserQuery';
+import { totalPoint, getUserByemail, updateUserOption, updateUser, claimPoint } from '../../query/user/querycurrentuser';
 import * as interface_ from "../../interface";
 
 export const currentusersPlugin = new Elysia()

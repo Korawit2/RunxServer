@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
-import { raceResult } from "../../query/user/guarduserQuery";
+import { raceResult } from "../../query/runner/queryrunner";
 import { createRace, queryRunner} from '../../query/races/racesQuery';
 import { eventYear } from '../../query/org_Events/event_query'
 
@@ -72,7 +72,7 @@ export const getraces = new Elysia()
         })
     })
 
-    .get("/races/result/", async ({query ,set}) => {
+    .get("/races/result", async ({query ,set}) => {
         try {
                 try {
                     var methodSort = "desc"

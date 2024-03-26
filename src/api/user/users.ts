@@ -1,8 +1,8 @@
 import { Elysia, t } from "elysia";
-import { changepassword } from '../../query/user/userquery';
-import { checkemail, getrankrunx } from '../../query/user/userquery';
-import { getUserByID, totalPoint } from "../../query/user/guarduserQuery";
+import { changepassword, getrankrunx, getUserByID, totalPoint  } from '../../query/user/queryusers';
+import { checkemail } from '../../query/user/querysingup';
 import  postmark  from "postmark"
+
 
 export const appUsersPlugin = new Elysia()
 
