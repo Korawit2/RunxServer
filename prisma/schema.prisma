@@ -90,6 +90,7 @@ model Race_result {
   nationality  String
   claim_status Boolean   @default(false)
   time_stamp   DateTime?
+  runner_img   String?
 }
 
 model Admin {
