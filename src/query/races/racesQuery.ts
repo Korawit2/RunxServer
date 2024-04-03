@@ -106,7 +106,8 @@ export const queryRunner = async (query: any) =>{
                 firstname: true,
                 lastname: true,
                 time: true,
-                gender: true
+                gender: true,
+                runner_img: true
             },
             orderBy: {
                 rank: 'asc',
@@ -132,7 +133,8 @@ const formRunner =  async ( query: any, score: number, ) =>{
         lastname: query.lastname,
         score: score,
         time: query.time,
-        gender: query.gender
+        gender: query.gender,
+        img: query.runner_img
         
     }
 }
