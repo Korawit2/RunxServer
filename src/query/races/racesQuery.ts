@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { calculateScore } from '../../function/calculate'
 import * as interface_ from "../../interface";
+import { paceAvg } from '../runner/queryrunner';
 const db = new PrismaClient()
 
 export const createRace = async (race: any, query: any) =>{
@@ -135,3 +136,31 @@ const formRunner =  async ( query: any, score: number, ) =>{
         
     }
 }
+
+export const queryRaces = async (query: any) => {
+    try {
+      const raceResult = await db.races.findMany({
+        where: {
+          event_id: parseInt(query),
+        },
+        select: {
+          id: true,
+          name: true
+        },
+      });
+      const dataConvert = await Promise.all(
+        raceResult.map(async (item) => {
+          const pace_Avg = await paceAvg(item.id);
+          return {
+            id: item.id,
+            name: item.name,
+            paceAvg: pace_Avg,
+          };
+        })
+      );
+      return dataConvert;
+    } catch (error) {
+      console.log("error", error);
+      return { status: "error", error };
+    }
+  };

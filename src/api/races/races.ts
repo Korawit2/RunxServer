@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { raceResult } from "../../query/runner/queryrunner";
 import { createRace, queryRunner} from '../../query/races/racesQuery';
 import { eventYear } from '../../query/org_Events/event_query'
+import { queryRaces } from "../../query/races/racesQuery";
 
 
 const db = new PrismaClient()
@@ -103,3 +104,16 @@ export const getraces = new Elysia()
             
         }),
     })
+    .get(
+        "/races/data/:id",
+        async ({ params }) => {
+          var methodSort = 'desc';
+          const result = await queryRaces(params.id);
+          return result
+        },
+        {
+          params: t.Object({
+            id: t.String(),
+          }),
+        }
+      );
