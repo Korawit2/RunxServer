@@ -59,35 +59,15 @@ export const getUserByemail = async (userid :string) =>{
     } 
 }
 
-export const updateUserOption = async (userBody: any, userEmail: { email: string}) =>{
-    try {   
-        
-        const updateUser = await db.userRunX.update({
-            where: {
-                email: userEmail.email
-            },
-            data: {
-                ...userBody
-            },
-        }) 
-        return { status: 'ok'}
-    } catch (error) {
-        console.log('error',error)
-        return { status: "fail"}
-    } 
-}
-
 export const updateUser = async (userBody: any,  userEmail: { email: string}) =>{
     try {   
+        console.log(userBody)
         const updateUser: any = await db.userRunX.update({
             where: {
                 email: userEmail.email
             },
             data: {
-                birth_date: new Date(userBody.birth_date),
-                gender: userBody.gender,
-                id_passport: userBody.id_passport,
-                nationality: userBody.nationality,
+                ...userBody
             },
         }) 
         return { status: 'ok'}
