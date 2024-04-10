@@ -13,10 +13,11 @@ export const createEvent = async (events: any) =>{
         if (query) {
             return false
         }
-        const users = await db.events.create({
+        const event = await db.events.create({
             data: {
                 name: title,
-                country: events.country
+                country: events.country,
+                logo_img: events.logo_img
             
             }
         })
