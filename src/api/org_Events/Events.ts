@@ -25,7 +25,8 @@ export const appEventPlugin = new Elysia()
         body: t.Object({
             name: t.String(),
             country: t.String(),
-            logo_img: t.String()
+            logo_img: t.String(),
+            distance: t.String()
         })
     })
 export const appgetEventPlugin = new Elysia()
