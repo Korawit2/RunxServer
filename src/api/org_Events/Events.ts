@@ -23,6 +23,7 @@ export const appEventPlugin = new Elysia()
         }
     },{
         body: t.Object({
+            org_id: t.String(),
             name: t.String(),
             country: t.String(),
             logo_img: t.String(),
