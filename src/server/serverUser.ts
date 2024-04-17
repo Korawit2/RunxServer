@@ -10,7 +10,7 @@ export const appUser = new Elysia()
         set.status = 401
         return 'Unauthorized'
         }
-        else if (profile.role != "admin") {
+        else if (profile.role != "user") {
             return 'Unauthorized'
         } 
     }

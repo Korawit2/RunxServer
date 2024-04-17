@@ -3,6 +3,7 @@ import { appUpload } from '../api/races/upload'
 import { appPostOrgPlugin, appgetOrgPlugin } from '../api/org_Events/Organization'
 import { appEventPlugin } from '../api/org_Events/Events'
 import { appRacesPlugin, getraces } from '../api/races/races'
+import { appuploadImg } from "../api/user/uploadimg";
 
 export const appAdmin = new Elysia()
 .guard({
@@ -18,6 +19,7 @@ export const appAdmin = new Elysia()
     }, (app) =>
                 app
                 .use(appUpload)
+                .use(appuploadImg)
                 .use(appPostOrgPlugin)
                 .use(appEventPlugin)
                 .use(appRacesPlugin)
