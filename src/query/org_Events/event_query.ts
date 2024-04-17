@@ -48,12 +48,15 @@ export const eventYear = async (id:any) =>{
 
 
 
-export const eventFilter = async  (query:{ country?: string, distance?: string, year?: string, title?: string }) =>{
+export const eventFilter = async  (query:{ country?: string, distance?: string, year?: string, title?: string, org_id?: string }) =>{
     try {
         const filterQuery: interface_.ObjectSort = {};
         const racetFilter: interface_.ObjectSort = {};
         if (query.country) {
             filterQuery["country"] = query.country
+        }
+        if (query.org_id) {
+            filterQuery["org_id"] = parseInt(query.org_id) 
         }
         if(query.distance) {
             filterQuery["distance"] = query.distance

@@ -62,6 +62,7 @@ export const appgetfillterEventPlugin = new Elysia()
         }
         },{
             query: t.Object({
+                org_id: t.Optional(t.String()),
                 country: t.Optional(t.String()),
                 distance: t.Optional(t.String()),
                 year:t.Optional(t.String()),
