@@ -25,7 +25,7 @@ export const createRace = async (race: any, query: any) =>{
                 date: new Date(race.date) ,
                 state: race.state,
                 start_time: race.start_time,
-                distance: race.distance
+                distance: parseInt(race.distance)
             }
         })
         return {

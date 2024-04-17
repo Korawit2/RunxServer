@@ -31,11 +31,14 @@ export const appRacesPlugin = new Elysia()
         }
     },{
         body: t.Object({
+            organization_id: t.String(),
+            event: t.String(),
             name: t.String(),
             date: t.String(),
             state: t.String(),
             start_time: t.String(),
-            distance: t.Number()
+            distance: t.Number(),
+            logo_img: t.String()
         }),
         query: t.Object({
             org: t.String(),
