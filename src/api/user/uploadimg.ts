@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia";
 import { uploadURI } from '../../function/uploadimg'
 
 export const appuploadImg = new Elysia()
-.get("/creating/singUrl", async ({set}) =>{
+.get("/creating/signUrl", async ({set}) =>{
     try {
         const extFile = "jpg";
         const filename = crypto.randomUUID();
