@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import console from 'console';
 import { calculateScore } from '../../function/calculate'
 import * as interface_ from "../../interface";
 import { paceAvg } from '../runner/queryrunner';
@@ -167,3 +168,13 @@ export const queryRaces = async (query: any) => {
       return { status: "error", error };
     }
   };
+
+  export const queryallRaces = async () => {
+    try {
+      const raceResult = await db.races.findMany();
+      return raceResult;
+    } catch (error) {
+      console.log("Error: ", error);
+      return {status: "error", error};
+    }
+  }

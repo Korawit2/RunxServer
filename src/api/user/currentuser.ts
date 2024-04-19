@@ -16,7 +16,7 @@ export const currentusersPlugin = new Elysia()
     return resultWithScore
 
 })
-.post("currentusers", async ({body, set, profile})=> {
+.post("/currentusers", async ({body, set, profile})=> {
     try {
         const userBody = body;
         if (userBody.birth_date  &&  userBody.birth_date !== "") {

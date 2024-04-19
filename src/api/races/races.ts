@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 import { raceResult } from "../../query/runner/queryrunner";
-import { createRace, queryRunner} from '../../query/races/racesQuery';
+import { createRace, queryallRaces, queryRunner} from '../../query/races/racesQuery';
 import { eventYear } from '../../query/org_Events/event_query'
 import { queryRaces } from "../../query/races/racesQuery";
 
@@ -38,8 +38,9 @@ export const appRacesPlugin = new Elysia()
             date: t.String(),
             state: t.String(),
             start_time: t.String(),
-            distance: t.Number(),
-            logo_img: t.String()
+            distance: t.String(),
+            logo_img: t.String(),
+            cover_img: t.String()
         }),
         query: t.Object({
             org: t.String(),
@@ -120,4 +121,10 @@ export const getraces = new Elysia()
             id: t.String(),
           }),
         }
-      );
+      )
+
+    .get("/races",
+    async () => {
+        const result = await queryallRaces();
+        return result;
+    });
