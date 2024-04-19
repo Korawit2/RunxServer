@@ -14,6 +14,7 @@ export const createRace = async (race: any, query: any) =>{
         })
         if (queryname) {
             return {
+                Message: "Race name is already exist",
                 status: false
             }
         }
