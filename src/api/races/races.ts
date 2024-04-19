@@ -20,6 +20,7 @@ export const appRacesPlugin = new Elysia()
         }
         return { 
             message: "insert race fail",
+            Message: res.Message,
             data: body
         }
         }  catch (error) {
