@@ -49,7 +49,7 @@ export const eventYear = async (id:any) =>{
 
 
 
-export const eventFilter = async  (query:{ country?: string, distance?: string, year?: string, title?: string, org_id?: string }) =>{
+export const eventFilter = async  (query:{ country?: string, distance?: string, year?: string, title?: string, org_id?: string, min?: string, max?: string }) =>{
     try {
         const filterQuery: interface_.ObjectSort = {};
         const racetFilter: interface_.ObjectSort = {};
@@ -78,16 +78,22 @@ export const eventFilter = async  (query:{ country?: string, distance?: string, 
             }
             
         }}
+        console.log(query.min)
         const events = await db.events.findMany({
             where: {
                 ...(Object.keys(racetFilter).length > 0 && {
-                Races: {
-                    some: {
-                        ...racetFilter
+                    Races: {
+                        some: {
+                            ...racetFilter
+                        }
+                    }}),
+                ...(Object.keys(filterQuery).length > 0 && filterQuery),
+                ...((query.min && query.max) && {
+                    distance:{
+                        lte: query.min,
+                        gte: query.max
                     }
-                }}),
-                ...(Object.keys(filterQuery).length > 0 && filterQuery)
-                
+                })
             }
         })
         return events

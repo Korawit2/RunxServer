@@ -81,7 +81,8 @@ export const getrankrunx = async (query: any) =>{
                 lastname_eng:true,
                 gender:true,
                 nationality: true,
-                birth_date: true
+                birth_date: true,
+                user_img: true
             },
             where:{
                 ...(Object.keys(query).length > 0 && {
@@ -125,9 +126,11 @@ export const getrankrunx = async (query: any) =>{
             totalscore: item.totalscore,
             gender: item.gender,
             age: item.age,
-            nationality: item.nationality
+            nationality: item.nationality,
+            user_img: item.user_img
         }
     })
+    console.log(dataConvert)
         return dataConvert
     }  
     catch (error) {
@@ -150,7 +153,8 @@ const RaceResults = async (user: any, totalscore: number) =>{
         totalscore: totalscore,
         gender: user.gender,
         age: age,
-        nationality: user.nationality
+        nationality: user.nationality,
+        user_img: user.user_img,
     }
 }
 

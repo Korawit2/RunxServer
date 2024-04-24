@@ -68,5 +68,7 @@ export const appgetfillterEventPlugin = new Elysia()
                 distance: t.Optional(t.String()),
                 year:t.Optional(t.String()),
                 title: t.Optional(t.String()),
+                min: t.Optional(t.String()),
+                max:t.Optional(t.String()),
             })
         })
