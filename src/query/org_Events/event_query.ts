@@ -49,56 +49,70 @@ export const eventYear = async (id:any) =>{
 
 
 
-export const eventFilter = async  (query:{ country?: string, distance?: string, year?: string, title?: string, org_id?: string, min?: string, max?: string }) =>{
+export const eventFilter = async (query: {
+    country?: string;
+    distance?: string;
+    year?: string;
+    title?: string;
+    org_id?: string;
+    min?: string;
+    max?: string;
+  }) => {
     try {
-        const filterQuery: interface_.ObjectSort = {};
-        const racetFilter: interface_.ObjectSort = {};
-        if (query.country) {
-            filterQuery["country"] = query.country
-        }
-        if (query.org_id) {
-            filterQuery["org_id"] = parseInt(query.org_id) 
-        }
-        if(query.distance) {
-            filterQuery["distance"] = query.distance
+      const filterQuery: interface_.ObjectSort = {};
+      const racetFilter: interface_.ObjectSort = {};
+      const filterbyDistance: interface_.ObjectSort = {};
+      const minDistance = query.min;
+      const MinD = minDistance;
+      const maxDistance = query.max;
+      const MaxD = maxDistance;
+      if (query.country) {
+        filterQuery["country"] = query.country;
+      }
+      if (query.org_id) {
+        filterQuery["org_id"] = parseInt(query.org_id);
+      }
+      if (query.distance) {
+        filterQuery["distance"] = parseInt(query.distance);
         if (query.year) {
-            if((query.year).trim() !== "") {
-                racetFilter["date"] = {
-                    contains:query.year,
-                    mode: 'insensitive'
-                }
-            }
+          if (query.year.trim() !== "") {
+            racetFilter["date"] = {
+              contains: query.year,
+              mode: "insensitive",
+            };
+          }
         }
-        if(query.title) {
-            if((query.title).trim() !== "") {
-                filterQuery["name"] = {
-                    contains:query.title,
-                    mode: 'insensitive'
-                }
-            }
-            
-        }}
-        console.log(query.min)
-        const events = await db.events.findMany({
-            where: {
-                ...(Object.keys(racetFilter).length > 0 && {
-                    Races: {
-                        some: {
-                            ...racetFilter
-                        }
-                    }}),
-                ...(Object.keys(filterQuery).length > 0 && filterQuery),
-                ...((query.min && query.max) && {
-                    distance:{
-                        lte: query.min,
-                        gte: query.max
-                    }
-                })
-            }
-        })
-        return events
+        if (query.title) {
+          if (query.title.trim() !== "") {
+            filterQuery["name"] = {
+              contains: query.title,
+              mode: "insensitive",
+            };
+          }
+        }
+      }
+      if (query.min && query.max) {
+        filterbyDistance["distance"] = {
+          lte: parseInt(query.max),
+          gte: parseInt(query.min),
+        };
+      }
+      const events = await db.events.findMany({
+        where: {
+          ...(Object.keys(racetFilter).length > 0 && {
+            Races: {
+              some: {
+                ...racetFilter,
+              },
+            },
+          }),
+          ...(Object.keys(filterQuery).length > 0 && filterQuery),
+          ...(Object.keys(filterbyDistance).length > 0 && filterbyDistance),
+        },
+      });
+      return events;
     } catch (error) {
-        console.log('error',error)
-        return { status: 'error', error}
-    } 
-}
+      console.log("error", error);
+      return { status: "error", error };
+    }
+  };

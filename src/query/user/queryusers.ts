@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { checkemail } from '../../query/user/querysingup';
 import { calculateScore } from '../../function/calculate'
+import { time } from 'console';
 const db = new PrismaClient()
 
 
@@ -102,16 +103,17 @@ export const getrankrunx = async (query: any) =>{
                 }
             })
             var totalscore: number = 0
+            var time_rece: any = []
             if (userrace.length > 0) {
                 for (let i = 0; i < userrace.length; i++) {
                     const score: any = await calculateScore(userrace[i].rank)
                     totalscore = totalscore + score
+                    time_rece.push(userrace[i].time)
                 }
             }
-            const resultWithScore = await RaceResults(user[i], totalscore, )
+            
+            const resultWithScore = await RaceResults(user[i], totalscore, time_rece)
             rankuser.push(resultWithScore)
-            
-            
         }
         rankuser.sort((a, b) => {
             return a.totalscore - b.totalscore;
@@ -127,10 +129,10 @@ export const getrankrunx = async (query: any) =>{
             gender: item.gender,
             age: item.age,
             nationality: item.nationality,
-            user_img: item.user_img
+            user_img: item.user_img,
+            time: item.time
         }
     })
-    console.log(dataConvert)
         return dataConvert
     }  
     catch (error) {
@@ -139,7 +141,7 @@ export const getrankrunx = async (query: any) =>{
     } 
 }
 
-const RaceResults = async (user: any, totalscore: number) =>{
+const RaceResults = async (user: any, totalscore: number, race: any) =>{
     var age : any = null
     if (user.birth_date !== null) {
         const date = new Date();
@@ -155,6 +157,8 @@ const RaceResults = async (user: any, totalscore: number) =>{
         age: age,
         nationality: user.nationality,
         user_img: user.user_img,
+        time: race
+        
     }
 }
 
