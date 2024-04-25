@@ -129,7 +129,7 @@ export const raceResult = async (id: string, method: any, limit: any) =>{
                 nationality: true
             }}
         )
-        if (user.nationality != null && user) {
+        if (user && user.nationality != null) {
                 const race: any = await db.races.findMany({
                     include:{
                         Race_result: {
