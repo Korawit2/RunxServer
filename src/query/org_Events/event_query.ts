@@ -18,7 +18,7 @@ export const createEvent = async (events: any) =>{
                 name: title,
                 country: events.country,
                 logo_img: events.logo_img,
-                distance: events.distance,
+                distance: parseInt(events.distance),
                 org_id: parseInt(events.org_id)
             }
         })

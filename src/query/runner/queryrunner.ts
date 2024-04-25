@@ -129,7 +129,7 @@ export const raceResult = async (id: string, method: any, limit: any) =>{
                 nationality: true
             }}
         )
-        if (user.nationality != null) {
+        if (user.nationality != null && user) {
                 const race: any = await db.races.findMany({
                     include:{
                         Race_result: {
@@ -181,7 +181,7 @@ export const raceResult = async (id: string, method: any, limit: any) =>{
                 }
         }
         return {
-            message: "User must Edit nationality"
+            message: "User must Edit nationality or there is no user's id"
         }
     } catch (error) {
         console.log('error',error)

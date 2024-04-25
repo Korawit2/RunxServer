@@ -29,8 +29,11 @@ export const resetpassword = new Elysia()
 
 .post("/users/resetpassword", async ({body, set, profile}) =>{
     try {
-        const useremail = await changepassword(body, profile)
-        return useremail
+        if (profile) {
+            const useremail = await changepassword(body, profile)
+            return useremail
+        }
+        return "Unauthorized"
     } catch (error) {
         set.status = 500
         return {
