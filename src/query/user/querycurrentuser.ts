@@ -42,6 +42,8 @@ export const getUserByemail = async (userid :string) =>{
                 id: true,
                 firstname_eng: true,
                 lastname_eng: true,
+                firstname_thai: true,
+                lastname_thai: true,
                 birth_date: true,
                 gender: true,
                 email: true,

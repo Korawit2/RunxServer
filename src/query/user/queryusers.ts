@@ -111,8 +111,7 @@ export const getrankrunx = async (query: any) =>{
                     time_rece.push(userrace[i].time)
                 }
             }
-            
-            const resultWithScore = await RaceResults(user[i], totalscore, time_rece)
+            const resultWithScore = await RaceResults(user[i], totalscore, time_rece.sort())
             rankuser.push(resultWithScore)
         }
         rankuser.sort((a, b) => {
