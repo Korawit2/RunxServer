@@ -133,31 +133,75 @@ export const queryRunner = async (query: any) => {
 export const topRunner = async (query: any) => {
   try {
     var runner: any = [];
-    const filterQuery: interface_.ObjectSort = {};
-    if (query.raceId) {
-      filterQuery["Races_id"] = parseInt(query.raceId);
-    }
-    if (query.gender) {
-      filterQuery["gender"] = query.gender;
-    }
+    const filtereventQuery: interface_.ObjectSort = {};
+    const filterraceQuery: interface_.ObjectSort = {};
 
-    const queryToprunner = db.race_result.findMany({
+    if (query.event_id) {
+      filtereventQuery["event_id"] = parseInt(query.event_id);
+    }
+    // const queryToprunner = db.race_result.findMany({
+    //   where: {
+    //     ...filterQuery,
+    //   },
+    //   select: {
+    //     rank: true,
+    //     firstname: true,
+    //     lastname: true,
+    //     time: true,
+    //     gender: true,
+    //     runner_img: true,
+    //   },
+    //   orderBy: {
+    //     time: "asc",
+    //   },
+    // });
+    const queryToprunner = await db.races.findMany({
       where: {
-        ...filterQuery,
+        ...filtereventQuery,
       },
       select: {
-        rank: true,
+        id: true,
+        name: true,
+        state: true,
+        distance: true,
+      },
+    });
+    const ids = queryToprunner.map((race) => race.id);
+
+    if (Array.isArray(query.Races_id) && query.Races_id.length > 0) {
+      // If query.Races_id is an array, use it directly
+      filterraceQuery["Races_id"] = { in: query.Races_id };
+    } else if (ids.length > 0) {
+      // If query.Races_id is not provided or not an array, use the IDs obtained from queryToprunner
+      filterraceQuery["Races_id"] = { in: ids };
+    }
+
+    if (query.Races_id) {
+      filterraceQuery["Races_id"] = ids;
+    }
+    if (query.gender) {
+      filterraceQuery["gender"] = query.gender;
+    }
+
+    const queryToprunnerRace = await db.race_result.findMany({
+      where: {
+        ...filterraceQuery,
+      },
+      select: {
+        Races_id: true,
         firstname: true,
         lastname: true,
         time: true,
-        gender: true,
+        nationality: true,
         runner_img: true,
       },
       orderBy: {
         time: "asc",
       },
     });
-    return queryToprunner;
+    // console.log(queryToprunner);
+    // console.log("Top of race: ", queryToprunnerRace);
+    return { queryToprunner, queryToprunnerRace };
   } catch (error) {
     console.log("Error: ", error);
     return { status: "error", error };

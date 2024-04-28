@@ -109,7 +109,8 @@ export const getraces = new Elysia()
     },
     {
       query: t.Object({
-        raceId: t.Optional(t.String()),
+        event_id: t.Optional(t.String()),
+        Races_id: t.Optional(t.String()),
         name: t.Optional(t.String()),
         gender: t.Optional(t.String()),
       }),
