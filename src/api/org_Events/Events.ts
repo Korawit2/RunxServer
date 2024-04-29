@@ -55,7 +55,6 @@ export const appEventPlugin = new Elysia()
       {
         body: t.Object({
           name: t.Optional(t.String()),
-          cover_img: t.Optional(t.String()),
           logo_img: t.Optional(t.String()),
           country: t.Optional(t.String())
         }),
