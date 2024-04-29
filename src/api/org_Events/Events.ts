@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { PrismaClient } from '@prisma/client'
 
-import {createEvent, eventFilter, eventYear} from '../../query/org_Events/event_query';
+import {createEvent, eventFilter, eventYear, editEvent} from '../../query/org_Events/event_query';
 
 const db = new PrismaClient()
 
@@ -30,6 +30,41 @@ export const appEventPlugin = new Elysia()
             distance: t.String()
         })
     })
+
+    .post("/events/edit/:id", async ({body, set, params}) => {
+        try {
+          if (params.id !== null && Object.keys(body).length !== 0) {
+            const editEvents = await editEvent(body, params.id)
+            if (editEvents.status == true) {
+              return {
+                Message: "Edit event success"
+              }
+            }
+            return {
+              status: editEvents.error
+            }
+          }
+        } catch (error) {
+          set.status = 500;
+          return {
+            message: "error",
+            error,
+          };
+        }
+      },
+      {
+        body: t.Object({
+          name: t.Optional(t.String()),
+          cover_img: t.Optional(t.String()),
+          logo_img: t.Optional(t.String()),
+          country: t.Optional(t.String())
+        }),
+        params: t.Object({
+          id: t.String()
+        })
+      }
+    )
+
 export const appgetEventPlugin = new Elysia()
     .get("/events/:id", ({params}) => {
         const Id = params.id

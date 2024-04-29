@@ -41,6 +41,27 @@ export const createRace = async (race: any, query: any) => {
     return { status: "error", error };
   }
 };
+export const editRace = async (race: any, id: string) => {
+  try {
+    if (race.date) {
+      race.date = new Date(race.date)
+    }
+    await db.races.update({
+      where: {
+        id: parseInt(id)
+      },
+      data: {
+        ...race,
+      },
+    });
+    return {
+      status: true
+    }
+  } catch (error) {
+    console.log("error", error);
+    return { status: "error", error };
+  }
+};
 
 export async function uploadDataToRaces(
   db: PrismaClient,

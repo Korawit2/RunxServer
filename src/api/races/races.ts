@@ -6,29 +6,72 @@ import {
   queryallRaces,
   queryRunner,
   topRunner,
+  editRace,
 } from "../../query/races/racesQuery";
 import { eventYear } from "../../query/org_Events/event_query";
 import { queryRaces } from "../../query/races/racesQuery";
 
 const db = new PrismaClient();
-export const appRacesPlugin = new Elysia().post(
-  "/races",
-  async ({ body, query, set, params }) => {
+export const appRacesPlugin = new Elysia()
+  .post(
+    "/races",
+    async ({ body, query, set, params }) => {
+      try {
+        const race = body;
+        const res = await createRace(race, query);
+        if (res.status) {
+          return {
+            message: "insert race complete",
+            data: body,
+          };
+        } else {
+          set.status = 400;
+          return {
+            message: "insert race fail",
+            Message: res.Message,
+            data: body,
+          };
+        }
+      } catch (error) {
+        set.status = 500;
+        return {
+          message: "error",
+          error,
+        };
+      }
+    },
+    {
+      body: t.Object({
+        organization_id: t.String(),
+        event: t.String(),
+        name: t.String(),
+        date: t.String(),
+        state: t.String(),
+        start_time: t.String(),
+        distance: t.String(),
+        logo_img: t.String(),
+        cover_img: t.String(),
+      }),
+      query: t.Object({
+        org: t.String(),
+        event: t.String(),
+      }),
+    }
+  )
+
+  .post("/races/edit/:id", async ({body, set, params}) => {
     try {
-      const race = body;
-      const res = await createRace(race, query);
-      if (res.status) {
+      if (params.id !== null && Object.keys(body).length !== 0) {
+        const editReces = await editRace(body, params.id)
+        if (editReces.status == true) {
+          return {
+            Message: "Edit race success"
+          }
+        }
+        set.status = 400
         return {
-          message: "insert race complete",
-          data: body,
-        };
-      } else {
-        set.status = 400;
-        return {
-          message: "insert race fail",
-          Message: res.Message,
-          data: body,
-        };
+          status: editReces.status
+        }
       }
     } catch (error) {
       set.status = 500;
@@ -40,22 +83,19 @@ export const appRacesPlugin = new Elysia().post(
   },
   {
     body: t.Object({
-      organization_id: t.String(),
-      event: t.String(),
-      name: t.String(),
-      date: t.String(),
-      state: t.String(),
-      start_time: t.String(),
-      distance: t.String(),
-      logo_img: t.String(),
-      cover_img: t.String(),
+      name: t.Optional(t.String()),
+      state: t.Optional(t.String()),
+      date: t.Optional(t.String()),
+      cover_img: t.Optional(t.String()),
+      logo_img: t.Optional(t.String()),
+      start_time: t.Optional(t.String())
     }),
-    query: t.Object({
-      org: t.String(),
-      event: t.String(),
-    }),
+    params: t.Object({
+      id: t.String()
+    })
   }
-);
+  )
+
 
 export const getraces = new Elysia()
   .get(
@@ -167,4 +207,6 @@ export const getraces = new Elysia()
   .get("/races", async () => {
     const result = await queryallRaces();
     return result;
-  });
+  })
+
+  

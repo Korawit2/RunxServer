@@ -29,6 +29,25 @@ export const createEvent = async (events: any) =>{
     } 
 }
 
+export const editEvent = async (event: any, id: string) => {
+  try {
+    await db.events.update({
+      where: {
+        id: parseInt(id)
+      },
+      data: {
+        ...event,
+      },
+    });
+    return {
+      status: true
+    }
+  } catch (error) {
+    console.log("error", error);
+    return { status: "error", error };
+  }
+};
+
 export const eventYear = async (id:any) =>{
     try{
         const events: any = await db.races.findUnique({
