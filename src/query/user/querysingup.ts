@@ -50,6 +50,7 @@ export const createUser = async (user: any) =>{
             data: {
                 firstname_eng: user.firstname,
                 lastname_eng: user.lastname,
+                nationality: user.nationality,
                 email: user.email,
                 password: user.password,
                 policy: user.policy_agreement
