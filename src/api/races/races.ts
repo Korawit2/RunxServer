@@ -59,43 +59,44 @@ export const appRacesPlugin = new Elysia()
     }
   )
 
-  .post("/races/edit/:id", async ({body, set, params}) => {
-    try {
-      if (params.id !== null && Object.keys(body).length !== 0) {
-        const editReces = await editRace(body, params.id)
-        if (editReces.status == true) {
-          return {
-            Message: "Edit race success"
+  .post(
+    "/races/edit/:id",
+    async ({ body, set, params }) => {
+      try {
+        if (params.id !== null && Object.keys(body).length !== 0) {
+          const editReces = await editRace(body, params.id);
+          if (editReces.status == true) {
+            return {
+              Message: "Edit race success",
+            };
           }
+          set.status = 400;
+          return {
+            status: editReces.status,
+          };
         }
-        set.status = 400
+      } catch (error) {
+        set.status = 500;
         return {
-          status: editReces.status
-        }
+          message: "error",
+          error,
+        };
       }
-    } catch (error) {
-      set.status = 500;
-      return {
-        message: "error",
-        error,
-      };
+    },
+    {
+      body: t.Object({
+        name: t.Optional(t.String()),
+        state: t.Optional(t.String()),
+        date: t.Optional(t.String()),
+        cover_img: t.Optional(t.String()),
+        logo_img: t.Optional(t.String()),
+        start_time: t.Optional(t.String()),
+      }),
+      params: t.Object({
+        id: t.String(),
+      }),
     }
-  },
-  {
-    body: t.Object({
-      name: t.Optional(t.String()),
-      state: t.Optional(t.String()),
-      date: t.Optional(t.String()),
-      cover_img: t.Optional(t.String()),
-      logo_img: t.Optional(t.String()),
-      start_time: t.Optional(t.String())
-    }),
-    params: t.Object({
-      id: t.String()
-    })
-  }
-  )
-
+  );
 
 export const getraces = new Elysia()
   .get(
@@ -167,6 +168,7 @@ export const getraces = new Elysia()
             methodSort = query.method;
           }
           const result = await raceResult(query.id, methodSort, query.limit);
+          console.log(result);
           return result;
         } catch (error) {
           set.status = 500;
@@ -207,6 +209,4 @@ export const getraces = new Elysia()
   .get("/races", async () => {
     const result = await queryallRaces();
     return result;
-  })
-
-  
+  });

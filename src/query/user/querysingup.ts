@@ -48,8 +48,8 @@ export const createUser = async (user: any) =>{
     try {
         const users = await db.userRunX.create({
             data: {
-                firstname_eng: user.firstname,
-                lastname_eng: user.lastname,
+                firstname_eng: user.firstname_eng,
+                lastname_eng: user.lastname_eng,
                 nationality: user.nationality,
                 email: user.email,
                 password: user.password,

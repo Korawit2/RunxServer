@@ -66,9 +66,7 @@ export const updateUser = async (
       where: {
         email: userEmail.email,
       },
-      data: {
-        ...userBody,
-      },
+      data: userBody,
     });
     return { status: "ok" };
   } catch (error) {

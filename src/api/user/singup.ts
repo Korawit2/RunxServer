@@ -18,8 +18,8 @@ export const appSingupPlugin = new Elysia().post(
       const alreadyUser = await duplecateUser(userBody.email);
       if (!alreadyUser) {
         const res = await createUser({
-          firstname: userBody.firstname,
-          lastname: userBody.lastname,
+          firstname_eng: userBody.firstname_eng,
+          lastname_eng: userBody.lastname_eng,
           nationality: userBody.nationality,
           email: userBody.email,
           password: userBody.password,
@@ -42,8 +42,8 @@ export const appSingupPlugin = new Elysia().post(
   },
   {
     body: t.Object({
-      firstname: t.String(),
-      lastname: t.String(),
+      firstname_eng: t.String(),
+      lastname_eng: t.String(),
       nationality: t.String(),
       email: t.String(),
       password: t.String(),

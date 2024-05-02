@@ -44,19 +44,19 @@ export const createRace = async (race: any, query: any) => {
 export const editRace = async (race: any, id: string) => {
   try {
     if (race.date) {
-      race.date = new Date(race.date)
+      race.date = new Date(race.date);
     }
     await db.races.update({
       where: {
-        id: parseInt(id)
+        id: parseInt(id),
       },
       data: {
         ...race,
       },
     });
     return {
-      status: true
-    }
+      status: true,
+    };
   } catch (error) {
     console.log("error", error);
     return { status: "error", error };
@@ -160,22 +160,6 @@ export const topRunner = async (query: any) => {
     if (query.event_id) {
       filtereventQuery["event_id"] = parseInt(query.event_id);
     }
-    // const queryToprunner = db.race_result.findMany({
-    //   where: {
-    //     ...filterQuery,
-    //   },
-    //   select: {
-    //     rank: true,
-    //     firstname: true,
-    //     lastname: true,
-    //     time: true,
-    //     gender: true,
-    //     runner_img: true,
-    //   },
-    //   orderBy: {
-    //     time: "asc",
-    //   },
-    // });
     const queryToprunner = await db.races.findMany({
       where: {
         ...filtereventQuery,
@@ -188,22 +172,17 @@ export const topRunner = async (query: any) => {
       },
     });
     const ids = queryToprunner.map((race) => race.id);
-
     if (Array.isArray(query.Races_id) && query.Races_id.length > 0) {
-      // If query.Races_id is an array, use it directly
       filterraceQuery["Races_id"] = { in: query.Races_id };
     } else if (ids.length > 0) {
-      // If query.Races_id is not provided or not an array, use the IDs obtained from queryToprunner
       filterraceQuery["Races_id"] = { in: ids };
     }
-
     if (query.Races_id) {
       filterraceQuery["Races_id"] = ids;
     }
     if (query.gender) {
       filterraceQuery["gender"] = query.gender;
     }
-
     const queryToprunnerRace = await db.race_result.findMany({
       where: {
         ...filterraceQuery,
@@ -220,8 +199,6 @@ export const topRunner = async (query: any) => {
         time: "asc",
       },
     });
-    // console.log(queryToprunner);
-    // console.log("Top of race: ", queryToprunnerRace);
     return { queryToprunner, queryToprunnerRace };
   } catch (error) {
     console.log("Error: ", error);
