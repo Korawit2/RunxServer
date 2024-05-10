@@ -17,6 +17,7 @@ export const appEventPlugin = new Elysia()
       try {
         const res = await createEvent(body);
         if (!res) {
+          set.status = 500;
           return { message: "insert fail" };
         }
         return { message: "insert complete " };

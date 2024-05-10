@@ -23,7 +23,6 @@ const app = new Elysia()
     if(auth) {
       const convert = auth.startsWith('Bearer ') ? auth.slice(7) : null
       const profile = await jwt.verify(convert!) //jwt.verify(convert!)
-      //console.log(profile)
       return { profile }
     } else {
     return false

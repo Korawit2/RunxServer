@@ -168,7 +168,7 @@ export const getraces = new Elysia()
             methodSort = query.method;
           }
           const result = await raceResult(query.id, methodSort, query.limit);
-          console.log(result);
+
           return result;
         } catch (error) {
           set.status = 500;

@@ -51,23 +51,23 @@ export const resetpassword = new Elysia()
     try {
         const isEmailExit = await checkemail(body.email)
         if (isEmailExit.isuser) {
-            // var client = new postmark.ServerClient(`${process.env.POSTMARK_TOKEN}`);
-            // client.sendEmailWithTemplate({
-            //     "From": "6322771930@g.siit.tu.ac.th",
-            //     "To": "6322772953@g.siit.tu.ac.th", //body.email
-            //     "TemplateAlias": "password-reset",
-            //     "TemplateModel": {
-            //     "product_url": "product_url_Value",
-            //     "product_name": "Runx",
-            //     "name": isEmailExit.query?.firstname_eng,
-            //     "action_url": "https://www.youtube.com/watch?v=3iPQhw4e2mc",
-            //     "operating_system": "macOs window",
-            //     "browser_name": "chrome",
-            //     "support_url": "https://www.youtube.com/watch?v=KTRv50n2jxA",
-            //     "company_name": "Runx",
-            //     "company_address": "สวรรค์ชั้น 7"
-            //     }
-            // });
+            var client = new postmark.ServerClient(`${process.env.POSTMARK_TOKEN}`);
+            client.sendEmailWithTemplate({
+                "From": "6322771930@g.siit.tu.ac.th",
+                "To": "6322772953@g.siit.tu.ac.th", //body.email
+                "TemplateAlias": "password-reset",
+                "TemplateModel": {
+                "product_url": "product_url_Value",
+                "product_name": "Runx",
+                "name": isEmailExit.query?.firstname_eng,
+                "action_url": "http://localhost:5173/ResetPassword",
+                "operating_system": "macOs window",
+                "browser_name": "chrome",
+                "support_url": "http://localhost:5173/ResetPassword",
+                "company_name": "Runx",
+                "company_address": "Runx"
+                }
+            });
             const token = await jwt.sign({
                 email: body.email,
                 role: "resetpassword"
